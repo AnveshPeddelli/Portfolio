@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Owner Console | Portfolio</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css?v=20260416-owner" />
+  </head>
+  <body data-page="creator">
+    <div class="ambient ambient-left"></div>
+    <div class="ambient ambient-right"></div>
+
+    <div class="site-shell creator-shell">
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="Go to portfolio home">
+          <span class="brand-mark">PA</span>
+          <span class="brand-copy">
+            <strong>Owner Console</strong>
+            <small>Private content studio</small>
+          </span>
+        </a>
+        <div class="nav-actions">
+          <button class="theme-toggle" type="button" data-theme-toggle>
+            <span class="theme-dot" aria-hidden="true"></span>
+            <span data-theme-label>Dark</span>
+          </button>
+          <a class="button button-ghost" href="/">View site</a>
+        </div>
+      </header>
+
+      <main>
+        <section class="section section-framed" id="login-panel">
+          <div class="section-head compact">
+            <span class="section-kicker">Owner login</span>
+            <h1>Private editing for your portfolio.</h1>
+            <p>
+              Use your server-side owner key. This route is not linked publicly, and
+              saving still requires the key on the backend.
+            </p>
+          </div>
+          <form class="auth-panel" id="creator-login">
+            <label>
+              <span>Owner key</span>
+              <input type="password" name="ownerKey" placeholder="Enter PORTFOLIO_ADMIN_KEY" required />
+            </label>
+            <button class="button" type="submit">Unlock editor</button>
+          </form>
+          <p class="form-status" id="login-status" role="status" aria-live="polite"></p>
+        </section>
+
+        <section class="section creator-dashboard" id="creator-dashboard" hidden>
+          <div class="section-framed">
+            <div class="page-banner">
+              <div class="section-head compact">
+                <span class="section-kicker">Content studio</span>
+                <h1>Edit data, publish posts, and manage images.</h1>
+                <p>
+                  Professionals usually keep portfolio content in a protected CMS.
+                  This is a lightweight local version built around your JSON data.
+                </p>
+              </div>
+              <div class="page-banner-card">
+                <span class="subsection-kicker">Hidden route</span>
+                <h3>/owner-console</h3>
+                <p>Share this route with nobody. The key is the real protection.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="section split-layout">
+            <form class="panel creator-card" id="profile-form">
+              <div class="subsection-head compact">
+                <div>
+                  <span class="subsection-kicker">Profile</span>
+                  <h3>Quick edit basics</h3>
+                </div>
+              </div>
+              <div class="form-grid">
+                <label>
+                  <span>Name</span>
+                  <input name="name" required />
+                </label>
+                <label>
+                  <span>Location</span>
+                  <input name="location" />
+                </label>
+                <label>
+                  <span>Email</span>
+                  <input name="email" type="email" />
+                </label>
+                <label>
+                  <span>Phone</span>
+                  <input name="phone" />
+                </label>
+                <label class="full-span">
+                  <span>Headline</span>
+                  <input name="headline" />
+                </label>
+                <label class="full-span">
+                  <span>Subheadline</span>
+                  <textarea name="subheadline" rows="3"></textarea>
+                </label>
+                <label class="full-span">
+                  <span>Resume URL</span>
+                  <input name="resumeUrl" placeholder="/uploads/resume.pdf or external link" />
+                </label>
+              </div>
+              <button class="button" type="submit">Save profile</button>
+            </form>
+
+            <form class="panel creator-card" id="upload-form">
+              <div class="subsection-head compact">
+                <div>
+                  <span class="subsection-kicker">Images</span>
+                  <h3>Upload a JPG, PNG, or WebP</h3>
+                </div>
+              </div>
+              <label>
+                <span>Image file</span>
+                <input type="file" name="image" accept="image/png,image/jpeg,image/webp" required />
+              </label>
+              <button class="button" type="submit">Upload image</button>
+              <p class="form-status" id="upload-status" role="status" aria-live="polite"></p>
+              <label>
+                <span>Uploaded image URL</span>
+                <input id="uploaded-url" readonly placeholder="Upload an image to get a URL" />
+              </label>
+            </form>
+          </div>
+
+          <div class="section split-layout">
+            <form class="panel creator-card" id="project-form">
+              <div class="subsection-head compact">
+                <div>
+                  <span class="subsection-kicker">Projects</span>
+                  <h3>Add a project card</h3>
+                </div>
+              </div>
+              <div class="form-grid">
+                <label>
+                  <span>Title</span>
+                  <input name="title" required />
+                </label>
+                <label>
+                  <span>Category</span>
+                  <input name="category" placeholder="Frontend Experience" required />
+                </label>
+                <label>
+                  <span>Type</span>
+                  <input name="type" placeholder="Product / Tool / Platform" />
+                </label>
+                <label>
+                  <span>Status</span>
+                  <input name="status" placeholder="Live, Prototype, Case study ready" />
+                </label>
+                <label class="full-span">
+                  <span>Summary</span>
+                  <textarea name="summary" rows="3" required></textarea>
+                </label>
+                <label class="full-span">
+                  <span>Impact</span>
+                  <textarea name="impact" rows="3"></textarea>
+                </label>
+                <label class="full-span">
+                  <span>Stack or tags</span>
+                  <input name="stack" placeholder="React, Node.js, Analytics" />
+                </label>
+                <label>
+                  <span>Link label</span>
+                  <input name="linkLabel" placeholder="View project" />
+                </label>
+                <label>
+                  <span>Link URL</span>
+                  <input name="linkUrl" placeholder="/contact or https://..." />
+                </label>
+                <label class="full-span">
+                  <span>Image URL</span>
+                  <input name="image" placeholder="/uploads/your-image.webp" />
+                </label>
+              </div>
+              <button class="button" type="submit">Add project</button>
+            </form>
+
+            <form class="panel creator-card" id="post-form">
+              <div class="subsection-head compact">
+                <div>
+                  <span class="subsection-kicker">Writing</span>
+                  <h3>Add a tech or travel post</h3>
+                </div>
+              </div>
+              <div class="form-grid">
+                <label>
+                  <span>Stream</span>
+                  <select name="kind">
+                    <option value="techBlogs">Tech blog</option>
+                    <option value="travelBlogs">Travel/adventure blog</option>
+                  </select>
+                </label>
+                <label>
+                  <span>Date</span>
+                  <input name="date" type="date" />
+                </label>
+                <label class="full-span">
+                  <span>Title</span>
+                  <input name="title" required />
+                </label>
+                <label class="full-span">
+                  <span>Excerpt</span>
+                  <textarea name="excerpt" rows="3" required></textarea>
+                </label>
+                <label>
+                  <span>Read time</span>
+                  <input name="readTime" placeholder="4 min read" />
+                </label>
+                <label>
+                  <span>Tags</span>
+                  <input name="tags" placeholder="Systems, Travel, Notes" />
+                </label>
+                <label class="full-span">
+                  <span>Body paragraphs</span>
+                  <textarea name="body" rows="7" placeholder="Write each paragraph on a new line." required></textarea>
+                </label>
+                <label class="full-span">
+                  <span>Image URL</span>
+                  <input name="image" placeholder="/uploads/your-image.webp" />
+                </label>
+              </div>
+              <button class="button" type="submit">Add post</button>
+            </form>
+          </div>
+
+          <section class="section section-framed creator-card">
+            <div class="subsection-head">
+              <div>
+                <span class="subsection-kicker">Advanced</span>
+                <h3>Raw JSON editor</h3>
+              </div>
+              <button class="button button-ghost" type="button" id="reload-content">Reload content</button>
+            </div>
+            <form id="json-form">
+              <label>
+                <span>data/site-content.json</span>
+                <textarea class="json-editor" id="json-editor" rows="22" spellcheck="false"></textarea>
+              </label>
+              <div class="form-actions">
+                <button class="button" type="submit">Save JSON</button>
+                <p class="form-status" id="save-status" role="status" aria-live="polite"></p>
+              </div>
+            </form>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="/creator.js?v=20260416-owner"></script>
+  </body>
+</html>

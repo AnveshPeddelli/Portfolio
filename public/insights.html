@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portfolio Insights</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css?v=20260416-owner" />
+  </head>
+  <body class="insights-page">
+    <div class="ambient ambient-left"></div>
+    <div class="ambient ambient-right"></div>
+
+    <div class="site-shell">
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="Go to portfolio home">
+          <span class="brand-mark">PA</span>
+          <span class="brand-copy">
+            <strong>Portfolio insights</strong>
+            <small>Private dashboard</small>
+          </span>
+        </a>
+        <a class="button button-ghost" href="/">Back to portfolio</a>
+      </header>
+
+      <main>
+        <section class="section section-framed">
+          <div class="section-head">
+            <span class="section-kicker">Dashboard</span>
+            <h1>Visitor and contact tracking</h1>
+            <p>
+              Enter your admin key to view private traffic details and stored
+              contact messages.
+            </p>
+          </div>
+
+          <form class="panel auth-panel" id="auth-form">
+            <label>
+              <span>Admin key</span>
+              <input
+                id="admin-key"
+                type="password"
+                placeholder="Set PORTFOLIO_ADMIN_KEY and paste it here"
+                required
+              />
+            </label>
+            <button class="button" type="submit">Load insights</button>
+            <p class="form-status" id="auth-status" role="status" aria-live="polite"></p>
+          </form>
+        </section>
+
+        <section class="section split-layout" id="insights-shell" hidden>
+          <div>
+            <div class="section-head compact">
+              <span class="section-kicker">Overview</span>
+              <h2>At-a-glance performance</h2>
+            </div>
+            <div class="metric-grid" id="insight-metrics"></div>
+
+            <div class="panel">
+              <div class="subsection-head compact">
+                <div>
+                  <span class="subsection-kicker">Top pages</span>
+                  <h3>What visitors engage with most</h3>
+                </div>
+              </div>
+              <div class="list-grid" id="top-pages"></div>
+            </div>
+
+            <div class="panel">
+              <div class="subsection-head compact">
+                <div>
+                  <span class="subsection-kicker">Referrers</span>
+                  <h3>Where visitors arrive from</h3>
+                </div>
+              </div>
+              <div class="list-grid" id="top-referrers"></div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="subsection-head compact">
+              <div>
+                <span class="subsection-kicker">Events</span>
+                <h3>Tracked actions</h3>
+              </div>
+            </div>
+            <div class="list-grid" id="event-breakdown"></div>
+          </div>
+        </section>
+
+        <section class="section split-layout" id="records-shell" hidden>
+          <div class="panel">
+            <div class="subsection-head compact">
+              <div>
+                <span class="subsection-kicker">Recent visitors</span>
+                <h3>Latest traffic records</h3>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>When</th>
+                    <th>Path</th>
+                    <th>IP</th>
+                    <th>Type</th>
+                    <th>Referrer</th>
+                  </tr>
+                </thead>
+                <tbody id="visitor-rows"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="subsection-head compact">
+              <div>
+                <span class="subsection-kicker">Inbox</span>
+                <h3>Recent contact messages</h3>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>When</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Interest</th>
+                    <th>Message</th>
+                  </tr>
+                </thead>
+                <tbody id="message-rows"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="/insights.js?v=20260416-owner"></script>
+  </body>
+</html>
