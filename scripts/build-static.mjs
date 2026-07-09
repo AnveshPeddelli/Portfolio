@@ -8,7 +8,6 @@ const ROOT_DIR = path.resolve(__dirname, "..");
 const PUBLIC_DIR = path.join(ROOT_DIR, "public");
 const DATA_DIR = path.join(ROOT_DIR, "data");
 const DOCS_DIR = path.join(ROOT_DIR, "docs");
-const CUSTOM_DOMAIN = "anveshpeddelli.com";
 const PUBLIC_DATA_DIR = path.join(PUBLIC_DIR, "data");
 const CONTENT_FILE = path.join(DATA_DIR, "site-content.json");
 const PUBLIC_CONTENT_FILE = path.join(PUBLIC_DATA_DIR, "site-content.json");
@@ -51,6 +50,5 @@ await copyPublicToDocs();
 await mkdir(DOCS_CONTENT_DIR, { recursive: true });
 await copyFile(CONTENT_FILE, DOCS_CONTENT_FILE);
 await writeFile(path.join(DOCS_DIR, ".nojekyll"), "");
-await writeFile(path.join(DOCS_DIR, "CNAME"), `${CUSTOM_DOMAIN}\n`);
 
 console.log("Static portfolio build ready in ./docs");
