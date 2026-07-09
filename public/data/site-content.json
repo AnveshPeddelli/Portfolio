@@ -5,7 +5,7 @@
     "subheadline": "Software Developer evolving into a management professional, bridging technology, business, and real-world experiences",
     "availability": "Open to software engineering and product-focused roles.",
     "location": "Bangalore, India / Remote",
-    "email": "peddelli.anvesh@gmail.com",
+    "email": "anvesh.peddelli@gmail.com",
     "phone": "+91 9490290297",
     "resumeUrl": "#",
     "avatarLabel": "AP",
@@ -401,38 +401,6 @@
         "The climb started in darkness, which made every small light feel earned. There is something useful about moving before you can see the whole path.",
         "By the time the ridge opened, the effort had already done its work. The view was a reward, but the real lesson was pace.",
         "Travel keeps reminding me that progress does not always need noise."
-      ]
-    },
-    {
-      "slug": "city-walks-and-systems",
-      "title": "City Walks and Systems Thinking",
-      "date": "2025-12-12",
-      "readTime": "5 min read",
-      "tags": [
-        "Urban Travel",
-        "Observation"
-      ],
-      "excerpt": "How wandering through unfamiliar neighborhoods sharpens the way I notice patterns in products.",
-      "body": [
-        "Good cities reveal themselves layer by layer. That is also true of software.",
-        "I like how travel forces attention. Signage, flow, bottlenecks, rhythm, and surprise all become easier to notice when nothing is familiar.",
-        "That habit of observation carries back into interface work and problem solving."
-      ]
-    },
-    {
-      "slug": "packing-light-living-clear",
-      "title": "Packing Light, Living Clear",
-      "date": "2025-09-16",
-      "readTime": "3 min read",
-      "tags": [
-        "Minimalism",
-        "Adventure"
-      ],
-      "excerpt": "A reflection on how carrying less changes the quality of a trip and the quality of your decisions.",
-      "body": [
-        "The most useful travel lesson has been this: less baggage creates more room for attention.",
-        "The same principle applies to product work. Simpler systems make better decisions possible.",
-        "When the essentials are obvious, energy goes where it matters."
       ]
     }
   ],
