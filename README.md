@@ -1,81 +1,66 @@
-# Portfolio Site
+# Anvesh Portfolio
 
-A lightweight, content-driven multi-page portfolio for showing both professional signal and personal journey without pulling in a heavy framework.
+A multi-page portfolio with a cinematic homepage, project/work pages, writing, and a contact flow that works cleanly on static hosting.
 
-## What is included
+## Public hosting shape
 
-- A multi-page portfolio with dedicated Home, Professional, Work, Journey, and Contact pages
-- Dynamic rendering from `data/site-content.json`
-- First-party visitor tracking stored in `data/visitors.json`
-- A built-in contact inbox stored in `data/messages.json`
-- A private `/insights` dashboard protected by `PORTFOLIO_ADMIN_KEY`
-- A hidden `/owner-console` content studio protected by the same owner key
-- Light/dark mode switching stored in the visitor's browser
+This repo is now set up for GitHub Pages style hosting:
 
-## Run locally
+- Source files live in `public/`
+- Portfolio content lives in `data/site-content.json`
+- Static deploy output is generated into `docs/`
+- The hosted contact form falls back to a prefilled `mailto:` flow, so it does not need a server
+
+## Local development
+
+For the public site:
+
+```powershell
+npm run build
+```
+
+Then serve `docs/` with any static server.
+
+For the older local Node workflow:
 
 ```powershell
 npm start
 ```
 
-For development with automatic restart:
+That local server is optional now. It is only useful if you want the legacy private editor and local JSON message storage.
+
+## Publish on GitHub Pages
+
+1. Run:
 
 ```powershell
-npm run dev
+npm run build
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+2. Commit the updated `docs/` folder.
+3. Push to GitHub.
+4. In GitHub repo settings, open **Pages**.
+5. Set the source to your main branch and the `/docs` folder.
+6. Save, then wait for GitHub Pages to publish.
 
-Main routes:
+Your site will be served from the generated static files in `docs/`.
 
-- `/`
-- `/professional`
-- `/work`
-- `/journey`
-- `/contact`
-- `/insights`
-- `/owner-console` hidden owner editor
+## Content updates
 
-## Set the admin key
+Edit:
 
-In PowerShell:
+```text
+data/site-content.json
+```
+
+Then rebuild:
 
 ```powershell
-$env:PORTFOLIO_ADMIN_KEY = "Anvesh@123"
-npm start
+npm run build
 ```
 
-Then open `/insights` for visitor logs, or `/owner-console` for the private content editor.
-Enter the same key when prompted.
+## Notes
 
-Keep this key server-side. Do not put your real password inside browser JavaScript.
-
-## How to add content professionally
-
-Professionals usually separate the public website from a protected content system:
-
-- Public pages read clean, structured content.
-- A private editor changes projects, posts, links, profile details, and images.
-- Media uploads are stored separately and referenced by URL.
-- Credentials stay on the server or in deployment environment variables.
-
-This project now follows that pattern in a lightweight way:
-
-- Use `/owner-console` to edit profile basics, add projects, add tech/travel posts, upload images, or edit the full JSON.
-- Uploaded images are saved to `public/uploads` and returned as URLs like `/uploads/example.webp`.
-- Add that image URL to a project or post in the editor, and the public cards will render it automatically.
-- Advanced edits still live in `data/site-content.json`, so you always have a readable source of truth.
-
-## Customize the site
-
-Edit `data/site-content.json` to update:
-
-- Name, headline, and contact details
-- Projects and achievements
-- Skills and timeline entries
-- Tech blog and travel blog content
-- Social links and resume URL
-
-## Deployment note
-
-This version uses local JSON files for tracking and message storage, so it is best deployed on a Node host or VPS where the filesystem persists across restarts. On serverless platforms, file-based analytics and inbox storage may be temporary unless you replace them with a database or external service.
+- Do not commit real passwords, admin keys, inbox messages, or visitor logs to a public repo.
+- The `public/assets/` folder is the right place for portfolio images that should ship with the site.
+- If you want a custom domain later, add a `CNAME` file inside `docs/`.

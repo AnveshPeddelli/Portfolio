@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title>PA Portfolio</title>
+  <defs>
+    <linearGradient id="g" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#d97745" />
+      <stop offset="100%" stop-color="#1f6f78" />
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="18" fill="#0f172a" />
+  <path
+    d="M16 46V18h16.3c8 0 12.7 4.1 12.7 11.1 0 7.1-4.7 11.4-12.8 11.4H24V46h-8Zm8-12h7.4c3.7 0 5.9-1.8 5.9-4.9 0-3.1-2.2-4.8-5.9-4.8H24v9.7Zm25.9 12-3-6.7H34.4l-3 6.7h-8.7l13.7-28h6.4l13.6 28h-8.5Z"
+    fill="url(#g)"
+  />
+</svg>

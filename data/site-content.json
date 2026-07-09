@@ -8,7 +8,8 @@
     "email": "peddelli.anvesh@gmail.com",
     "phone": "+91 9490290297",
     "resumeUrl": "#",
-    "avatarLabel": "PA",
+    "avatarLabel": "AP",
+    "photoUrl": "/assets/anvesh-portfolio-pic.jpg",
     "heroMetrics": [
       {
         "value": "12+",
@@ -43,7 +44,7 @@
       },
       {
         "label": "Email",
-        "url": "mailto:hello@yourdomain.dev"
+        "url": "mailto:peddelli.anvesh@gmail.com"
       }
     ]
   },

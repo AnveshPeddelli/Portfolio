@@ -1,11 +1,18 @@
 const page = document.body.dataset.page || "home";
 const THEME_STORAGE_KEY = "portfolio-theme";
+const PAGE_FILES = {
+  home: "index.html",
+  professional: "professional.html",
+  work: "work.html",
+  journey: "journey.html",
+  contact: "contact.html",
+};
 const routes = [
-  { href: "/", label: "Home", page: "home" },
-  { href: "/professional", label: "Professional", page: "professional" },
-  { href: "/work", label: "Work", page: "work" },
-  { href: "/journey", label: "Journey", page: "journey" },
-  { href: "/contact", label: "Contact", page: "contact" },
+  { href: PAGE_FILES.home, label: "Home", page: "home" },
+  { href: PAGE_FILES.professional, label: "Professional", page: "professional" },
+  { href: PAGE_FILES.work, label: "Work", page: "work" },
+  { href: PAGE_FILES.journey, label: "Journey", page: "journey" },
+  { href: PAGE_FILES.contact, label: "Contact", page: "contact" },
 ];
 
 const state = {
@@ -31,7 +38,7 @@ async function init() {
   bindEvents();
 
   try {
-    state.content = await fetchJson("/api/content");
+    state.content = await fetchJson("data/site-content.json");
     state.stories = buildStories(state.content);
     renderShell();
     renderPage();
@@ -49,7 +56,7 @@ async function init() {
         <div class="section-head">
           <span class="section-kicker">Portfolio unavailable</span>
           <h1>There was a problem loading the portfolio content.</h1>
-          <p>Start the local server again and refresh the page.</p>
+          <p>Run the static build again or start the local preview server and refresh the page.</p>
         </div>
       </section>
     `;
@@ -118,12 +125,6 @@ function bindEvents() {
 }
 
 function getInitialTheme() {
-  const savedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
-
-  if (savedTheme === "light" || savedTheme === "dark") {
-    return savedTheme;
-  }
-
   return "dark";
 }
 
@@ -167,6 +168,69 @@ async function fetchJson(url) {
   return response.json();
 }
 
+function resolveHref(value = "") {
+  if (!value) {
+    return "#";
+  }
+
+  if (/^(?:[a-z]+:|#)/i.test(value)) {
+    return value;
+  }
+
+  const [pathPart, hash = ""] = value.split("#");
+  const suffix = hash ? `#${hash}` : "";
+
+  if (pathPart === "/") {
+    return `${PAGE_FILES.home}${suffix}`;
+  }
+
+  const cleanPath = pathPart.replace(/^\/+/, "");
+
+  if (PAGE_FILES[cleanPath]) {
+    return `${PAGE_FILES[cleanPath]}${suffix}`;
+  }
+
+  return `${cleanPath}${suffix}`;
+}
+
+function isHttpUrl(value = "") {
+  return /^https?:\/\//i.test(value);
+}
+
+function isPlaceholderLink(value = "") {
+  return (
+    value.includes("your-username") ||
+    value.includes("your-handle") ||
+    value.includes("hello@yourdomain.dev")
+  );
+}
+
+function getVisibleSocialLinks(profile) {
+  return (profile.socialLinks || []).filter(
+    (link) => typeof link?.url === "string" && link.url.trim() && !isPlaceholderLink(link.url),
+  );
+}
+
+function buildMailtoUrl(profile, payload) {
+  const subject = payload.interest
+    ? `Portfolio inquiry: ${payload.interest}`
+    : `Portfolio inquiry from ${payload.name || "a visitor"}`;
+  const body = [
+    `Hi ${profile.name},`,
+    "",
+    `Name: ${payload.name}`,
+    `Email: ${payload.email}`,
+    `Company / team: ${payload.company || "Not provided"}`,
+    `Reason: ${payload.interest || "General inquiry"}`,
+    "",
+    payload.message,
+    "",
+    "Sent from your portfolio contact form.",
+  ].join("\n");
+
+  return `mailto:${profile.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
 function buildStories(content) {
   const techStories = (content.techBlogs || []).map((story) => ({
     ...story,
@@ -199,11 +263,11 @@ function renderShell() {
 
   shell.header.innerHTML = `
     <div class="topbar">
-      <a class="brand" href="/" aria-label="Go to portfolio home" data-track-link data-track-label="Brand">
+      <a class="brand" href="${PAGE_FILES.home}" aria-label="Go to portfolio home" data-track-link data-track-label="Brand">
         <span class="brand-mark">${escapeHtml(initials)}</span>
         <span class="brand-copy">
           <strong>${escapeHtml(profile.name)}</strong>
-          <small>Professional portfolio</small>
+          <small>My Portfolio</small>
         </span>
       </a>
       <nav class="topnav" aria-label="Primary">
@@ -223,12 +287,8 @@ function renderShell() {
           .join("")}
       </nav>
       <div class="nav-actions">
-        <button class="theme-toggle" type="button" data-theme-toggle>
-          <span class="theme-dot" aria-hidden="true"></span>
-          <span data-theme-label>${state.theme === "dark" ? "Dark" : "Light"}</span>
-        </button>
-        <a class="button button-ghost" href="/contact" data-track-link data-track-label="Header CTA">
-          Start a conversation
+        <a class="button button-ghost" href="${PAGE_FILES.contact}" data-track-link data-track-label="Header CTA">
+          Hire me
         </a>
       </div>
     </div>
@@ -238,12 +298,12 @@ function renderShell() {
     <div class="footer">
       <p>
         ${escapeHtml(profile.name)} | ${new Date().getFullYear()} |
-        A lightweight, multi-page portfolio with private contact capture and first-party analytics.
+        Software, product thinking, and personal stories.
       </p>
       <div class="footer-links">
-        <a href="/work" data-track-link data-track-label="Footer: Work">Selected work</a>
-        <a href="/journey" data-track-link data-track-label="Footer: Journey">Writing and travel</a>
-        <a href="/contact" data-track-link data-track-label="Footer: Contact">Contact</a>
+        <a href="${PAGE_FILES.work}" data-track-link data-track-label="Footer: Work">Selected work</a>
+        <a href="${PAGE_FILES.journey}" data-track-link data-track-label="Footer: Journey">Writing and travel</a>
+        <a href="${PAGE_FILES.contact}" data-track-link data-track-label="Footer: Contact">Contact</a>
       </div>
     </div>
   `;
@@ -275,107 +335,147 @@ function renderPage() {
 }
 
 function renderHomePage() {
-  const { profile, professionalFocus, workOverview, journeyFocus, projects } = state.content;
-  const featuredProjects = projects.slice(0, 2);
+  const { profile, professionalFocus, journeyFocus, projects } = state.content;
+  const featuredProjects = projects.slice(0, 3);
   const recentStories = state.stories.slice(0, 2);
+  const heroPhoto = resolveHref(profile.photoUrl || "assets/anvesh-portfolio-pic.jpg");
+  const firstName = (profile.name || "Anvesh").split(" ")[0] || "Anvesh";
+  const visibleSocialLinks = getVisibleSocialLinks(profile);
+  const services = [
+    {
+      number: "01",
+      title: "Development",
+      description:
+        professionalFocus.coreStrengths[1] ||
+        "Building lightweight full-stack experiences with a focus on performance.",
+    },
+    {
+      number: "02",
+      title: "Design",
+      description:
+        "Responsive interfaces, clean content structure, and product pages that feel easy to scan.",
+    },
+    {
+      number: "03",
+      title: "Systems",
+      description:
+        professionalFocus.coreStrengths[2] ||
+        "Internal tools, dashboards, and automations that remove repetitive work.",
+    },
+  ];
+  const portfolioTabs = ["Design", "Build", "Systems", "Writing"];
 
   shell.main.innerHTML = `
-    <section class="section hero-section page-hero">
+    <section class="section hero-section page-hero cinematic-hero">
+      <img
+        class="hero-photo"
+        src="${escapeAttribute(heroPhoto)}"
+        alt="${escapeAttribute(profile.name)} portrait"
+        fetchpriority="high"
+      />
+      <div class="hero-vignette" aria-hidden="true"></div>
       <div class="hero-copy">
-        <span class="eyebrow">Portfolio</span>
-        <h1>${escapeHtml(profile.headline)}</h1>
+        <span class="eyebrow">My Portfolio</span>
+        <h1>Hi, I am ${escapeHtml(firstName)}.</h1>
         <p class="hero-description">${escapeHtml(profile.subheadline)}</p>
         <div class="hero-actions">
-          <a class="button" href="/professional" data-track-link data-track-label="Home: Professional">Review profile</a>
-          <a class="button button-ghost" href="/work" data-track-link data-track-label="Home: Work">See selected work</a>
+          <a class="button" href="${PAGE_FILES.professional}" data-track-link data-track-label="Home: Professional">Show profile</a>
+          <a class="button button-ghost" href="${PAGE_FILES.work}" data-track-link data-track-label="Home: Work">Know more</a>
         </div>
-        <ul class="stack-list">
+        <ul class="stack-list hero-stack">
           ${profile.highlights.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
         </ul>
       </div>
-      <aside class="hero-panel">
-        <div class="snapshot-head">
+      <a class="scroll-cue" href="#services" aria-label="Jump to services">
+        <span aria-hidden="true"></span>
+      </a>
+    </section>
+
+    <section class="section section-framed portfolio-strip">
+      <div class="portfolio-strip-head">
+        <div>
+          <span class="section-kicker">My Portfolio</span>
+          <h2>Selected work with a sharper visual edge.</h2>
+        </div>
+        <div class="portfolio-tabs">
+          ${portfolioTabs.map((tab) => `<span>${escapeHtml(tab)}</span>`).join("")}
+        </div>
+      </div>
+      <div class="gallery-strip">
+        <a
+          class="gallery-card gallery-photo reveal"
+          href="${PAGE_FILES.professional}"
+          style="--gallery-image: url('${escapeAttribute(heroPhoto)}')"
+          data-track-link
+          data-track-label="Home gallery: Profile"
+        >
+          <span>Profile</span>
+          <strong>${escapeHtml(profile.name)}</strong>
+        </a>
+        ${featuredProjects
+          .map(
+            (project, index) => `
+              <a
+                class="gallery-card gallery-card-${index + 1} reveal"
+                href="${PAGE_FILES.work}"
+                data-track-link
+                data-track-label="Home gallery: ${escapeAttribute(project.title)}"
+              >
+                <span>${escapeHtml(project.category)}</span>
+                <strong>${escapeHtml(project.title)}</strong>
+              </a>
+            `,
+          )
+          .join("")}
+      </div>
+    </section>
+
+    <section class="section section-framed services-section" id="services">
+      <div class="section-head centered">
+        <span class="section-kicker">Our Services</span>
+        <h2>What I can bring into a team.</h2>
+        <p>${escapeHtml(professionalFocus.intro)}</p>
+      </div>
+      <div class="service-grid">
+        ${services
+          .map(
+            (service) => `
+              <article class="service-card reveal">
+                <span class="service-icon" aria-hidden="true">${escapeHtml(service.number)}</span>
+                <h3>${escapeHtml(service.title)}</h3>
+                <p>${escapeHtml(service.description)}</p>
+              </article>
+            `,
+          )
+          .join("")}
+      </div>
+    </section>
+
+    <section class="section split-layout showcase-section">
+      <div class="panel profile-panel">
+        <div class="subsection-head compact">
           <div>
             <span class="subsection-kicker">Quick view</span>
-            <h3>Simple, direct, and easy to evaluate.</h3>
+            <h3>${escapeHtml(profile.availability)}</h3>
           </div>
-          <span class="snapshot-badge">${escapeHtml(profile.location)}</span>
         </div>
-        <p>${escapeHtml(profile.availability)}</p>
+        <p class="quiet-copy">${escapeHtml(profile.headline)}</p>
         <div class="metric-band compact-metrics">
-          ${profile.heroMetrics
-            .map(
-              (metric) => createMetricCard(metric.value, metric.label),
-            )
-            .join("")}
+          ${profile.heroMetrics.map((metric) => createMetricCard(metric.value, metric.label)).join("")}
         </div>
-        <div class="route-stack">
-          ${createRouteLink("/professional", "Professional", "How I work")}
-          ${createRouteLink("/work", "Work", "Projects and outcomes")}
-          ${createRouteLink("/journey", "Journey", "Writing and travel")}
-        </div>
-      </aside>
-    </section>
-
-    <section class="section split-layout">
-      <div class="panel">
-        <div class="subsection-head compact">
-          <div>
-            <span class="subsection-kicker">Explore</span>
-            <h3>The site in four clean paths</h3>
-          </div>
-        </div>
-        <div class="path-grid">
-          ${createPathCard("/professional", "Professional", "Strengths, capabilities, and career arc.")}
-          ${createPathCard("/work", "Work", "Outcome-led projects and case-study framing.")}
-          ${createPathCard("/journey", "Journey", "Tech notes, travel stories, and perspective.")}
-          ${createPathCard("/contact", "Contact", "Direct details, availability, and form.")}
+        <div class="project-links">
+          <a class="button" href="${PAGE_FILES.contact}" data-track-link data-track-label="Home: Contact CTA">Start a conversation</a>
         </div>
       </div>
-      <div class="panel">
-        <div class="subsection-head compact">
-          <div>
-            <span class="subsection-kicker">Best fit</span>
-            <h3>Where I add the most value</h3>
-          </div>
-        </div>
-        <div class="chip-row">
-          ${professionalFocus.roleFit.map((item) => `<span class="chip">${escapeHtml(item)}</span>`).join("")}
-        </div>
-      </div>
-    </section>
-
-    <section class="section split-layout">
       <div class="panel">
         <div class="subsection-head compact">
           <div>
             <span class="subsection-kicker">Featured work</span>
-            <h3>Two quick project snapshots</h3>
+            <h3>Project snapshots</h3>
           </div>
         </div>
         <div class="preview-stack">
-          ${featuredProjects.map((project) => createPreviewCard(project.title, project.impact, "/work")).join("")}
-        </div>
-      </div>
-      <div class="panel">
-        <div class="subsection-head compact">
-          <div>
-            <span class="subsection-kicker">Work style</span>
-            <h3>How I usually operate</h3>
-          </div>
-        </div>
-        <div class="strength-strip">
-          ${professionalFocus.coreStrengths
-            .slice(0, 3)
-            .map(
-              (strength, index) => `
-                <article class="strength-card reveal">
-                  <span class="eyebrow">Focus ${index + 1}</span>
-                  <strong>${escapeHtml(strength)}</strong>
-                </article>
-              `,
-            )
-            .join("")}
+          ${featuredProjects.map((project) => createPreviewCard(project.title, project.impact, PAGE_FILES.work)).join("")}
         </div>
       </div>
     </section>
@@ -396,21 +496,21 @@ function renderHomePage() {
         <div class="subsection-head compact">
           <div>
             <span class="subsection-kicker">Signal</span>
-            <h3>A compact view of what matters most</h3>
+            <h3>Role fit</h3>
           </div>
         </div>
-        <div class="metric-band">
-          ${workOverview.metrics.slice(0, 3).map((item) => createMetricCard(item.value, item.label)).join("")}
+        <div class="chip-row">
+          ${professionalFocus.roleFit.map((item) => `<span class="chip">${escapeHtml(item)}</span>`).join("")}
         </div>
         <p class="quiet-copy">${escapeHtml(journeyFocus.intro)}</p>
         <div class="social-row">
-          ${profile.socialLinks
+          ${visibleSocialLinks
             .map(
               (link) => `
                 <a
                   class="social-link"
-                  href="${escapeAttribute(link.url)}"
-                  ${link.url.startsWith("http") ? 'target="_blank" rel="noreferrer"' : ""}
+                  href="${escapeAttribute(resolveHref(link.url))}"
+                  ${isHttpUrl(link.url) ? 'target="_blank" rel="noreferrer"' : ""}
                   data-track-link
                   data-track-label="Home social: ${escapeAttribute(link.label)}"
                 >
@@ -420,9 +520,6 @@ function renderHomePage() {
               `,
             )
             .join("")}
-        </div>
-        <div class="project-links">
-          <a class="button" href="/contact" data-track-link data-track-label="Home: Contact CTA">Start a conversation</a>
         </div>
       </div>
     </section>
@@ -574,7 +671,7 @@ function renderProfessionalPage() {
           The goal is clarity: enough signal to show depth, without turning the page
           into a wall of explanation.
         </p>
-        <a class="button" href="/work" data-track-link data-track-label="Professional CTA">See selected work</a>
+        <a class="button" href="${PAGE_FILES.work}" data-track-link data-track-label="Professional CTA">See selected work</a>
       </div>
     </section>
   `;
@@ -670,7 +767,7 @@ function renderWorkPage() {
           I can share the fuller case-study version in interviews, hiring loops, or
           project conversations.
         </p>
-        <a class="button" href="/contact" data-track-link data-track-label="Work CTA">Request walkthroughs</a>
+        <a class="button" href="${PAGE_FILES.contact}" data-track-link data-track-label="Work CTA">Request walkthroughs</a>
       </div>
     </section>
   `;
@@ -764,7 +861,7 @@ function renderJourneyPage() {
           Open a story for the longer version, or jump to contact if you want to talk
           about writing, product thinking, or collaboration.
         </p>
-        <a class="button button-ghost" href="/contact" data-track-link data-track-label="Journey CTA">Start a conversation</a>
+        <a class="button button-ghost" href="${PAGE_FILES.contact}" data-track-link data-track-label="Journey CTA">Start a conversation</a>
       </div>
     </section>
   `;
@@ -776,14 +873,18 @@ function renderContactPage() {
   const { profile, contactPrompts, contactDetails } = state.content;
   const resumeHref = profile.resumeUrl === "#" ? `mailto:${profile.email}` : profile.resumeUrl;
   const resumeValue = profile.resumeUrl === "#" ? "Available on request" : "Open resume";
+  const visibleSocialLinks = getVisibleSocialLinks(profile);
 
   shell.main.innerHTML = `
     <section class="section section-framed page-section">
       <div class="page-banner">
         <div class="section-head compact">
           <span class="section-kicker">Contact</span>
-          <h1>Direct details, private inbox, clean handoff.</h1>
-          <p>${escapeHtml(contactDetails.note)}</p>
+          <h1>Direct details and a clean way to reach me.</h1>
+          <p>
+            Use the form below or email me directly. On the hosted Git version,
+            the form opens your email app with the message prefilled.
+          </p>
         </div>
         <div class="page-banner-card">
           <span class="subsection-kicker">Response window</span>
@@ -798,7 +899,7 @@ function renderContactPage() {
         <div class="contact-cards">
           ${createContactCard("Email", profile.email, `mailto:${profile.email}`)}
           ${createContactCard("Phone", profile.phone, `tel:${profile.phone.replace(/\s+/g, "")}`)}
-          ${createContactCard("Location", profile.location, "/professional")}
+          ${createContactCard("Location", profile.location, PAGE_FILES.professional)}
           ${createContactCard("Resume", resumeValue, resumeHref)}
         </div>
         <div class="panel">
@@ -820,13 +921,13 @@ function renderContactPage() {
             </div>
           </div>
           <div class="social-row">
-            ${profile.socialLinks
+            ${visibleSocialLinks
               .map(
                 (link) => `
                   <a
                     class="social-link"
-                    href="${escapeAttribute(link.url)}"
-                    ${link.url.startsWith("http") ? 'target="_blank" rel="noreferrer"' : ""}
+                    href="${escapeAttribute(resolveHref(link.url))}"
+                    ${isHttpUrl(link.url) ? 'target="_blank" rel="noreferrer"' : ""}
                     data-track-link
                     data-track-label="Contact social: ${escapeAttribute(link.label)}"
                   >
@@ -880,11 +981,11 @@ function renderContactPage() {
     <section class="section section-framed">
       <div class="section-head compact">
         <span class="section-kicker">Signals</span>
-        <h2>Private by default, useful by design.</h2>
+        <h2>Simple, direct, and ready to share.</h2>
       </div>
       <div class="feature-grid compact-grid">
-        ${createFeatureCard("Private inbox", "Messages submitted here are stored directly by the portfolio backend.")}
-        ${createFeatureCard("First-party analytics", "Visits are logged by the site itself so page performance can be reviewed without adding a heavy third-party stack.")}
+        ${createFeatureCard("Email handoff", "The hosted contact form opens a prefilled email so people can reach you without any broken backend dependency.")}
+        ${createFeatureCard("Git-hosted ready", "The public site can be deployed from this repository as static files, which keeps hosting simple and reliable.")}
         ${createFeatureCard("Best for", contactDetails.bestFor.slice(0, 2).join(" and "))}
       </div>
     </section>
@@ -962,7 +1063,7 @@ function renderStories() {
 
 function createPathCard(href, title, description) {
   return `
-    <a class="path-card reveal" href="${href}" data-track-link data-track-label="Path: ${escapeAttribute(title)}">
+    <a class="path-card reveal" href="${resolveHref(href)}" data-track-link data-track-label="Path: ${escapeAttribute(title)}">
       <span class="eyebrow">Explore</span>
       <h3>${escapeHtml(title)}</h3>
       <p>${escapeHtml(description)}</p>
@@ -973,7 +1074,7 @@ function createPathCard(href, title, description) {
 
 function createRouteLink(href, title, description) {
   return `
-    <a class="route-link reveal" href="${href}" data-track-link data-track-label="Route: ${escapeAttribute(title)}">
+    <a class="route-link reveal" href="${resolveHref(href)}" data-track-link data-track-label="Route: ${escapeAttribute(title)}">
       <strong>${escapeHtml(title)}</strong>
       <span>${escapeHtml(description)}</span>
     </a>
@@ -982,7 +1083,7 @@ function createRouteLink(href, title, description) {
 
 function createPreviewCard(title, description, href) {
   return `
-    <a class="preview-card reveal" href="${href}" data-track-link data-track-label="Preview: ${escapeAttribute(title)}">
+    <a class="preview-card reveal" href="${resolveHref(href)}" data-track-link data-track-label="Preview: ${escapeAttribute(title)}">
       <strong>${escapeHtml(title)}</strong>
       <p>${escapeHtml(description)}</p>
     </a>
@@ -996,7 +1097,7 @@ function createStoryPreview(story) {
       <strong>${escapeHtml(story.title)}</strong>
       <p>${escapeHtml(story.excerpt)}</p>
       <div class="project-links">
-        <a class="text-link" href="/journey" data-track-link data-track-label="Story preview: ${escapeAttribute(story.title)}">
+        <a class="text-link" href="${PAGE_FILES.journey}" data-track-link data-track-label="Story preview: ${escapeAttribute(story.title)}">
           Open journey page
         </a>
       </div>
@@ -1025,7 +1126,7 @@ function createMetricCard(value, label) {
 function createProjectCard(project) {
   return `
     <article class="project-card reveal">
-      ${project.image ? `<img class="card-media" src="${escapeAttribute(project.image)}" alt="${escapeAttribute(project.title)} preview" loading="lazy" />` : ""}
+      ${project.image ? `<img class="card-media" src="${escapeAttribute(resolveHref(project.image))}" alt="${escapeAttribute(project.title)} preview" loading="lazy" />` : ""}
       <div class="project-head">
         <div>
           <span class="eyebrow">${escapeHtml(project.type)}</span>
@@ -1044,7 +1145,7 @@ function createProjectCard(project) {
             (link) => `
               <a
                 class="text-link"
-                href="${escapeAttribute(link.url)}"
+                href="${escapeAttribute(resolveHref(link.url))}"
                 data-track-link
                 data-track-label="${escapeAttribute(project.title)}: ${escapeAttribute(link.label)}"
               >
@@ -1061,7 +1162,7 @@ function createProjectCard(project) {
 function createStoryCard(story) {
   return `
     <article class="story-card reveal">
-      ${story.image ? `<img class="card-media" src="${escapeAttribute(story.image)}" alt="${escapeAttribute(story.title)} cover" loading="lazy" />` : ""}
+      ${story.image ? `<img class="card-media" src="${escapeAttribute(resolveHref(story.image))}" alt="${escapeAttribute(story.title)} cover" loading="lazy" />` : ""}
       <div class="story-head">
         <span class="tag-pill">${escapeHtml(story.label)}</span>
         <span class="status-pill">${formatDate(story.date)}</span>
@@ -1082,7 +1183,8 @@ function createStoryCard(story) {
 }
 
 function createContactCard(title, value, href) {
-  const isExternal = href.startsWith("http");
+  const resolvedHref = resolveHref(href);
+  const isExternal = isHttpUrl(resolvedHref);
 
   return `
     <article class="contact-card reveal">
@@ -1093,7 +1195,7 @@ function createContactCard(title, value, href) {
       <div class="project-links">
         <a
           class="text-link"
-          href="${escapeAttribute(href)}"
+          href="${escapeAttribute(resolvedHref)}"
           ${isExternal ? 'target="_blank" rel="noreferrer"' : ""}
           data-track-link
           data-track-label="Contact: ${escapeAttribute(title)}"
@@ -1118,34 +1220,25 @@ async function handleContactSubmit(event, form) {
   };
 
   if (status) {
-    status.textContent = "Sending your message...";
+    status.textContent = "Opening your email app...";
     status.style.color = "var(--muted)";
   }
 
   try {
-    const response = await fetch("/api/contact", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    const result = await response.json();
-
-    if (!response.ok) {
-      throw new Error(result.message || "Something went wrong.");
-    }
-
+    const mailtoUrl = buildMailtoUrl(state.content.profile, payload);
     form.reset();
 
     if (status) {
-      status.textContent = result.message;
+      status.textContent = "Your message is ready in your email client.";
       status.style.color = "var(--teal)";
     }
 
+    window.location.href = mailtoUrl;
     void trackEvent("contact_submission", { interest: payload.interest, page });
   } catch (error) {
     if (status) {
       status.textContent =
-        error instanceof Error ? error.message : "Unable to send your message.";
+        error instanceof Error ? error.message : "Unable to prepare your email message.";
       status.style.color = "var(--accent-deep)";
     }
   }
@@ -1161,7 +1254,7 @@ function openStoryModal(slug) {
   shell.modalContent.innerHTML = `
     <span class="eyebrow">${escapeHtml(story.label)}</span>
     <h3>${escapeHtml(story.title)}</h3>
-    ${story.image ? `<img class="card-media story-modal-media" src="${escapeAttribute(story.image)}" alt="${escapeAttribute(story.title)} cover" />` : ""}
+    ${story.image ? `<img class="card-media story-modal-media" src="${escapeAttribute(resolveHref(story.image))}" alt="${escapeAttribute(story.title)} cover" />` : ""}
     <div class="story-meta">
       <span>${formatDate(story.date)}</span>
       <span>${escapeHtml(story.readTime)}</span>
@@ -1209,22 +1302,8 @@ function setupRevealAnimations() {
 }
 
 async function trackEvent(type, metadata = {}) {
-  try {
-    await fetch("/api/track", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        type,
-        path: window.location.pathname,
-        title: document.title,
-        language: navigator.language,
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        metadata,
-      }),
-    });
-  } catch (error) {
-    console.debug("Tracking skipped", error);
-  }
+  void type;
+  void metadata;
 }
 
 function formatDate(value) {

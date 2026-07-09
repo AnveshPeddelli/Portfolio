@@ -1,0 +1,483 @@
+{
+  "profile": {
+    "name": "Anvesh Peddelli",
+    "headline": "Code. Strategy. Exploration -- Writing My Own Grand Line",
+    "subheadline": "Software Developer evolving into a management professional, bridging technology, business, and real-world experiences",
+    "availability": "Open to software engineering and product-focused roles.",
+    "location": "Bangalore, India / Remote",
+    "email": "peddelli.anvesh@gmail.com",
+    "phone": "+91 9490290297",
+    "resumeUrl": "#",
+    "avatarLabel": "AP",
+    "photoUrl": "/assets/anvesh-portfolio-pic.jpg",
+    "heroMetrics": [
+      {
+        "value": "12+",
+        "label": "Products and systems shipped"
+      },
+      {
+        "value": "8",
+        "label": "Essays and notes published"
+      },
+      {
+        "value": "15k+",
+        "label": "Refactored with measurable impact"
+      },
+      {
+        "value": "4",
+        "label": "Travel stories in the journal"
+      }
+    ],
+    "highlights": [
+      "Turning ambiguity into scoped, durable product decisions",
+      "Building lightweight tools that teams actually adopt",
+      "Communicating technical work with clarity and restraint"
+    ],
+    "socialLinks": [
+      {
+        "label": "GitHub",
+        "url": "https://github.com/your-username"
+      },
+      {
+        "label": "LinkedIn",
+        "url": "https://www.linkedin.com/in/your-handle"
+      },
+      {
+        "label": "Email",
+        "url": "mailto:peddelli.anvesh@gmail.com"
+      }
+    ]
+  },
+  "professionalFocus": {
+    "intro": "I focus on reliable execution, simple systems, and communication that keeps teams moving.",
+    "coreStrengths": [
+      "Turning rough ideas into scoped product roadmaps",
+      "Building lightweight full-stack experiences with a focus on performance",
+      "Creating internal tools, dashboards, and automations that remove repetitive work",
+      "Balancing architecture decisions with practical shipping pressure"
+    ],
+    "roleFit": [
+      "Product engineering roles with real ownership",
+      "Platform or internal-tool work that improves team leverage",
+      "Teams that value calm execution over noise"
+    ],
+    "operatingPrinciples": [
+      {
+        "title": "Clarity before complexity",
+        "description": "I prefer getting the information model, workflow, and product logic clear before adding architecture weight."
+      },
+      {
+        "title": "Small systems, strong leverage",
+        "description": "Compact tools that are easy to understand often create more lasting value than oversized platforms."
+      },
+      {
+        "title": "Measured progress",
+        "description": "I like work that can be explained through outcome, adoption, and time saved rather than effort alone."
+      },
+      {
+        "title": "Documentation as delivery",
+        "description": "Clear notes, case studies, and handoff material are part of the product, not separate administrative work."
+      }
+    ],
+    "collaborationNotes": [
+      "Translate ambiguity into a plan people can react to",
+      "Keep implementation details connected to business outcomes",
+      "Write updates that reduce meetings instead of creating more",
+      "Balance pace with enough structure to avoid rework"
+    ]
+  },
+  "workOverview": {
+    "intro": "I like work where product context, usability, and systems thinking all matter together.",
+    "metrics": [
+      {
+        "value": "70%",
+        "label": "Reporting time reduced in one analytics workflow"
+      },
+      {
+        "value": "4",
+        "label": "Project categories represented across the portfolio"
+      },
+      {
+        "value": "3",
+        "label": "Disciplines combined regularly: engineering, product, communication"
+      },
+      {
+        "value": "1",
+        "label": "Preferred direction: clear, lightweight systems over unnecessary complexity"
+      }
+    ],
+    "caseStudyLens": [
+      {
+        "title": "Context first",
+        "description": "Why the work mattered, what constraints shaped it, and what made it worth prioritizing."
+      },
+      {
+        "title": "Decision quality",
+        "description": "What changed because the system existed, not just the fact that it was shipped."
+      },
+      {
+        "title": "Implementation judgment",
+        "description": "Tradeoffs chosen to balance speed, maintainability, and user experience."
+      },
+      {
+        "title": "Adoption and communication",
+        "description": "How the work was explained, understood, and made useful to the people around it."
+      }
+    ],
+    "deliveryThemes": [
+      {
+        "title": "Systems that clarify decisions",
+        "description": "Projects that help teams see signals, reduce ambiguity, and act sooner."
+      },
+      {
+        "title": "Automation that removes drag",
+        "description": "Tools that cut repetitive follow-up work and improve reliability without adding process burden."
+      },
+      {
+        "title": "Interfaces grounded in structure",
+        "description": "Frontend work that starts with calmer data and content decisions, not surface polish alone."
+      },
+      {
+        "title": "Narrative-ready delivery",
+        "description": "Projects framed so a hiring manager, founder, or teammate can understand value quickly."
+      }
+    ]
+  },
+  "projects": [
+    {
+      "title": "SignalBoard",
+      "type": "Analytics Platform",
+      "summary": "A lightweight internal analytics workspace that turned fragmented product events into one decision layer for the team.",
+      "impact": "Reduced weekly reporting time by 70% and helped the product team catch adoption drops within the first release day.",
+      "category": "Backend Systems",
+      "status": "Case study ready",
+      "stack": [
+        "TypeScript",
+        "Node.js",
+        "Event Tracking",
+        "Data Visualization",
+        "Performance Tuning"
+      ],
+      "links": [
+        {
+          "label": "Request case study",
+          "url": "/contact"
+        },
+        {
+          "label": "Talk through architecture",
+          "url": "/contact"
+        }
+      ]
+    },
+    {
+      "title": "LaunchDock",
+      "type": "Portfolio CMS Concept",
+      "summary": "A content-first publishing workflow that lets project updates, tech essays, and media all live in one structured source of truth.",
+      "impact": "Cut content update time from hours to minutes through reusable schemas and dynamic rendering.",
+      "category": "Frontend Experience",
+      "status": "Prototype",
+      "stack": [
+        "JavaScript",
+        "Content Modeling",
+        "Design Systems",
+        "Responsive UI"
+      ],
+      "links": [
+        {
+          "label": "Request walkthrough",
+          "url": "/contact"
+        }
+      ]
+    },
+    {
+      "title": "Ops Relay",
+      "type": "Workflow Automation",
+      "summary": "A compact operations tool for routing recurring updates, reminders, and status signals without adding process drag.",
+      "impact": "Saved the team several manual status-touch hours every week and improved follow-up consistency.",
+      "category": "Automation",
+      "status": "Live utility",
+      "stack": [
+        "Node.js",
+        "Automation Design",
+        "JSON APIs",
+        "Workflow Thinking"
+      ],
+      "links": [
+        {
+          "label": "Review workflow summary",
+          "url": "/contact"
+        }
+      ]
+    },
+    {
+      "title": "Trail Ledger",
+      "type": "Travel Journal Product",
+      "summary": "A journal experience for cataloging routes, moods, photos, and lessons from trips in a calm, mobile-first way.",
+      "impact": "Blended product design, storytelling, and structured data into a single experience that feels personal but organized.",
+      "category": "Product Design",
+      "status": "Personal lab",
+      "stack": [
+        "Frontend Architecture",
+        "UX Writing",
+        "Content Strategy",
+        "Mobile UI"
+      ],
+      "links": [
+        {
+          "label": "Discuss product story",
+          "url": "/contact"
+        }
+      ]
+    }
+  ],
+  "skills": [
+    {
+      "group": "Core Engineering",
+      "items": [
+        "JavaScript / TypeScript",
+        "Node.js",
+        "REST APIs",
+        "Async workflows",
+        "Lightweight architecture"
+      ]
+    },
+    {
+      "group": "Frontend Craft",
+      "items": [
+        "Responsive UI systems",
+        "Interaction design",
+        "Content-driven rendering",
+        "Accessibility-aware layouts",
+        "Performance-focused styling"
+      ]
+    },
+    {
+      "group": "Delivery and Product",
+      "items": [
+        "Roadmapping",
+        "Feature scoping",
+        "Stakeholder communication",
+        "Requirement synthesis",
+        "Outcome tracking"
+      ]
+    },
+    {
+      "group": "Automation and Data",
+      "items": [
+        "Event instrumentation",
+        "Operational dashboards",
+        "Simple data pipelines",
+        "File-based persistence",
+        "Workflow simplification"
+      ]
+    },
+    {
+      "group": "Storytelling",
+      "items": [
+        "Technical writing",
+        "Case study framing",
+        "Travel journaling",
+        "Personal branding",
+        "Narrative-driven communication"
+      ]
+    }
+  ],
+  "achievements": [
+    {
+      "title": "Built systems that teams kept after the prototype phase",
+      "meta": "Engineering impact",
+      "description": "Focused on solutions that hold up in real usage, not just demo moments."
+    },
+    {
+      "title": "Created a portfolio narrative that separates signal from noise",
+      "meta": "Brand building",
+      "description": "Combined professional work, personal writing, and travel perspective without making the site feel crowded."
+    },
+    {
+      "title": "Documented projects in a way that hiring teams can skim quickly",
+      "meta": "Communication",
+      "description": "Wrote concise, metric-led summaries so achievements land fast."
+    },
+    {
+      "title": "Kept the stack intentionally light",
+      "meta": "Technical choice",
+      "description": "No heavy framework overhead, but still dynamic, interactive, and ready to deploy."
+    }
+  ],
+  "timeline": [
+    {
+      "year": "Now",
+      "title": "Sharpening a balanced personal brand",
+      "subtitle": "Engineering + writing + exploration",
+      "description": "Bringing together product work, storytelling, and curiosity into one coherent digital presence."
+    },
+    {
+      "year": "2025",
+      "title": "Leaning deeper into systems and automation",
+      "subtitle": "Operational clarity",
+      "description": "Built small but high-leverage tools that reduced repetitive coordination and improved follow-up quality."
+    },
+    {
+      "year": "2024",
+      "title": "Shipping user-facing products with measurable outcomes",
+      "subtitle": "Product engineering",
+      "description": "Focused on fast interfaces, cleaner backend contracts, and decision-making through product signals."
+    },
+    {
+      "year": "2023",
+      "title": "Writing more in public",
+      "subtitle": "Thoughtful communication",
+      "description": "Started publishing lessons from development work, design tradeoffs, and self-directed experiments."
+    },
+    {
+      "year": "Always",
+      "title": "Collecting stories from the road",
+      "subtitle": "Travel and adventure",
+      "description": "Using travel to reset perspective, notice detail, and bring more texture into both life and work."
+    }
+  ],
+  "techBlogs": [
+    {
+      "slug": "systems-before-screens",
+      "title": "Systems Before Screens",
+      "date": "2026-02-14",
+      "readTime": "6 min read",
+      "tags": [
+        "Architecture",
+        "Product Thinking"
+      ],
+      "excerpt": "Why the best frontend work often begins with calmer backend and content decisions.",
+      "body": [
+        "Some of the hardest UI problems disappear once the underlying flow becomes clear. I have learned to step back, shape the information, and only then design the interaction.",
+        "That approach creates faster products and calmer teams. Instead of decorating confusion, you create a system that can support growth.",
+        "The result is not just a better screen. It is a more durable product decision."
+      ]
+    },
+    {
+      "slug": "lightweight-tools-win",
+      "title": "Lightweight Tools Win More Often Than We Admit",
+      "date": "2025-11-03",
+      "readTime": "5 min read",
+      "tags": [
+        "Automation",
+        "Execution"
+      ],
+      "excerpt": "A note on building the smallest useful internal tool instead of another broad platform.",
+      "body": [
+        "Teams usually do not need a sprawling platform to fix a repetitive problem. They need a clean workflow that saves time immediately.",
+        "When a tool is simple enough to understand in one sitting, adoption happens faster and maintenance stays realistic.",
+        "Small tools earn trust. Trust buys room for bigger ideas later."
+      ]
+    },
+    {
+      "slug": "writing-as-engineering",
+      "title": "Writing Is Part of Engineering",
+      "date": "2025-08-21",
+      "readTime": "4 min read",
+      "tags": [
+        "Communication",
+        "Career"
+      ],
+      "excerpt": "Clear writing is not a side skill. It is how decisions survive the meeting that created them.",
+      "body": [
+        "Code changes shape the product, but explanations shape the team. If an idea cannot be explained simply, it often is not ready.",
+        "I treat notes, case studies, and status updates as part of the build process rather than admin work.",
+        "Strong writing shortens feedback loops and makes collaboration easier."
+      ]
+    }
+  ],
+  "travelBlogs": [
+    {
+      "slug": "sunrise-ridge-notes",
+      "title": "Sunrise Ridge Notes",
+      "date": "2026-01-05",
+      "readTime": "4 min read",
+      "tags": [
+        "Hiking",
+        "Reflection"
+      ],
+      "excerpt": "A short journal entry on what early climbs teach about pacing, patience, and presence.",
+      "body": [
+        "The climb started in darkness, which made every small light feel earned. There is something useful about moving before you can see the whole path.",
+        "By the time the ridge opened, the effort had already done its work. The view was a reward, but the real lesson was pace.",
+        "Travel keeps reminding me that progress does not always need noise."
+      ]
+    },
+    {
+      "slug": "city-walks-and-systems",
+      "title": "City Walks and Systems Thinking",
+      "date": "2025-12-12",
+      "readTime": "5 min read",
+      "tags": [
+        "Urban Travel",
+        "Observation"
+      ],
+      "excerpt": "How wandering through unfamiliar neighborhoods sharpens the way I notice patterns in products.",
+      "body": [
+        "Good cities reveal themselves layer by layer. That is also true of software.",
+        "I like how travel forces attention. Signage, flow, bottlenecks, rhythm, and surprise all become easier to notice when nothing is familiar.",
+        "That habit of observation carries back into interface work and problem solving."
+      ]
+    },
+    {
+      "slug": "packing-light-living-clear",
+      "title": "Packing Light, Living Clear",
+      "date": "2025-09-16",
+      "readTime": "3 min read",
+      "tags": [
+        "Minimalism",
+        "Adventure"
+      ],
+      "excerpt": "A reflection on how carrying less changes the quality of a trip and the quality of your decisions.",
+      "body": [
+        "The most useful travel lesson has been this: less baggage creates more room for attention.",
+        "The same principle applies to product work. Simpler systems make better decisions possible.",
+        "When the essentials are obvious, energy goes where it matters."
+      ]
+    }
+  ],
+  "journeyFocus": {
+    "intro": "This side stays curated on purpose. It adds perspective without taking focus away from the work.",
+    "themes": [
+      {
+        "title": "Writing sharpens thought",
+        "description": "Technical writing forces structure, tradeoff awareness, and cleaner communication."
+      },
+      {
+        "title": "Travel sharpens observation",
+        "description": "New environments make systems, flow, friction, and detail easier to notice."
+      },
+      {
+        "title": "Reflection sharpens judgment",
+        "description": "Pausing to document lessons makes both product work and personal growth more deliberate."
+      }
+    ],
+    "topicAreas": [
+      "Architecture and product thinking",
+      "Workflow simplification and internal tooling",
+      "Travel reflections and field notes",
+      "Minimalism, pace, and clarity"
+    ],
+    "professionalValue": [
+      "Helps me explain technical decisions more clearly",
+      "Builds pattern recognition across unfamiliar systems",
+      "Keeps the portfolio human without making it casual",
+      "Adds narrative depth to interviews and networking conversations"
+    ]
+  },
+  "contactDetails": {
+    "responseWindow": "Usually replies within 1 to 2 business days.",
+    "bestFor": [
+      "Full-time software engineering opportunities",
+      "Platform, product, or internal-tool discussions",
+      "Freelance builds and technical consulting",
+      "Writing, collaboration, or speaking conversations"
+    ],
+    "note": "Messages are stored privately, and visits are tracked with first-party analytics."
+  },
+  "contactPrompts": [
+    "Have a role, freelance project, or product idea in mind?",
+    "Want someone who can build and communicate clearly?",
+    "Interested in tech writing, collaboration, or speaking?"
+  ]
+}
