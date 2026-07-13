@@ -11,9 +11,13 @@ const PORT = Number(process.env.PORT || 3000);
 const ADMIN_KEY = process.env.PORTFOLIO_ADMIN_KEY || "";
 const ROOT_DIR = path.resolve(__dirname);
 const PUBLIC_DIR = path.join(ROOT_DIR, "public");
-const DATA_DIR = path.join(ROOT_DIR, "data");
-const UPLOAD_DIR = path.join(PUBLIC_DIR, "uploads");
+const PUBLIC_DATA_DIR = path.join(PUBLIC_DIR, "data");
+const DEFAULT_DATA_DIR = path.join(ROOT_DIR, "data");
+const DATA_DIR = resolveStoragePath(process.env.PORTFOLIO_DATA_DIR, "data");
+const UPLOAD_DIR = resolveStoragePath(process.env.PORTFOLIO_UPLOAD_DIR, path.join("public", "uploads"));
+const DEFAULT_CONTENT_FILE = path.join(DEFAULT_DATA_DIR, "site-content.json");
 const CONTENT_FILE = path.join(DATA_DIR, "site-content.json");
+const PUBLIC_CONTENT_FILE = path.join(PUBLIC_DATA_DIR, "site-content.json");
 const VISITORS_FILE = path.join(DATA_DIR, "visitors.json");
 const MESSAGES_FILE = path.join(DATA_DIR, "messages.json");
 const ROUTE_MAP = {
@@ -36,21 +40,46 @@ const MIME_TYPES = {
   ".json": "application/json; charset=utf-8",
   ".jpeg": "image/jpeg",
   ".jpg": "image/jpeg",
+  ".pdf": "application/pdf",
   ".png": "image/png",
   ".svg": "image/svg+xml",
   ".webp": "image/webp",
 };
-const IMAGE_MIME_EXTENSIONS = {
+const UPLOAD_MIME_EXTENSIONS = {
+  "application/pdf": "pdf",
   "image/jpeg": "jpg",
   "image/png": "png",
   "image/webp": "webp",
 };
+const UPLOAD_SIZE_LIMITS = {
+  "application/pdf": 20 * 1024 * 1024,
+  "image/jpeg": 5 * 1024 * 1024,
+  "image/png": 5 * 1024 * 1024,
+  "image/webp": 5 * 1024 * 1024,
+};
 
 const defaultCollection = { entries: [] };
+
+function resolveStoragePath(value, fallback) {
+  const selectedPath = typeof value === "string" && value.trim() ? value.trim() : fallback;
+
+  return path.isAbsolute(selectedPath)
+    ? path.normalize(selectedPath)
+    : path.resolve(ROOT_DIR, selectedPath);
+}
+
+function isInsideDirectory(filePath, directoryPath) {
+  const relativePath = path.relative(directoryPath, filePath);
+
+  return Boolean(relativePath) && !relativePath.startsWith("..") && !path.isAbsolute(relativePath);
+}
 
 async function ensureDataFiles() {
   await mkdir(DATA_DIR, { recursive: true });
   await mkdir(UPLOAD_DIR, { recursive: true });
+
+  const content = await ensureContentFile();
+  await syncPublicContent(content);
 
   const defaults = [
     [VISITORS_FILE, defaultCollection],
@@ -63,6 +92,18 @@ async function ensureDataFiles() {
     } catch {
       await writeJson(filePath, fallback);
     }
+  }
+}
+
+async function ensureContentFile() {
+  try {
+    const raw = await readFile(CONTENT_FILE, "utf8");
+    return JSON.parse(raw);
+  } catch {
+    const fallbackContent =
+      CONTENT_FILE === DEFAULT_CONTENT_FILE ? {} : await readJson(DEFAULT_CONTENT_FILE, {});
+    await writeJson(CONTENT_FILE, fallbackContent);
+    return fallbackContent;
   }
 }
 
@@ -79,6 +120,20 @@ async function writeJson(filePath, value) {
   await writeFile(filePath, JSON.stringify(value, null, 2));
 }
 
+async function writeContent(value) {
+  await writeJson(CONTENT_FILE, value);
+  await syncPublicContent(value);
+}
+
+async function syncPublicContent(value) {
+  try {
+    await mkdir(PUBLIC_DATA_DIR, { recursive: true });
+    await writeJson(PUBLIC_CONTENT_FILE, value);
+  } catch (error) {
+    console.warn(`Unable to sync public content copy: ${getErrorMessage(error)}`);
+  }
+}
+
 function sendJson(response, statusCode, payload) {
   response.writeHead(statusCode, JSON_HEADERS);
   response.end(JSON.stringify(payload));
@@ -90,6 +145,10 @@ function sendText(response, statusCode, body, contentType = "text/plain; charset
     "Content-Type": contentType,
   });
   response.end(body);
+}
+
+function getErrorMessage(error) {
+  return error instanceof Error ? error.message : "Unknown error.";
 }
 
 function getClientIp(request) {
@@ -161,33 +220,45 @@ function authorizeAdmin(request, url, response) {
 }
 
 function sanitizeFileStem(value) {
-  const base = String(value || "portfolio-image")
+  const base = String(value || "portfolio-upload")
     .replace(/\.[^.]+$/, "")
     .toLowerCase()
     .replace(/[^a-z0-9-]+/g, "-")
     .replace(/^-+|-+$/g, "")
     .slice(0, 48);
 
-  return base || "portfolio-image";
+  return base || "portfolio-upload";
 }
 
-async function saveUploadedImage(payload) {
+async function saveUploadedFile(payload) {
   if (typeof payload.dataUrl !== "string") {
-    throw new Error("Upload must include an image data URL.");
+    throw new Error("Upload must include a file data URL.");
   }
 
-  const match = payload.dataUrl.match(/^data:(image\/(?:jpeg|png|webp));base64,([a-z0-9+/=]+)$/i);
+  const match = payload.dataUrl.match(
+    /^data:(image\/(?:jpeg|png|webp)|application\/pdf);base64,([a-z0-9+/=]+)$/i,
+  );
 
   if (!match) {
-    throw new Error("Only JPG, PNG, and WebP images are supported.");
+    throw new Error("Only JPG, PNG, WebP, and PDF files are supported.");
   }
 
   const [, mimeType, base64] = match;
-  const extension = IMAGE_MIME_EXTENSIONS[mimeType.toLowerCase()];
+  const normalizedMimeType = mimeType.toLowerCase();
+  const extension = UPLOAD_MIME_EXTENSIONS[normalizedMimeType];
   const buffer = Buffer.from(base64, "base64");
+  const sizeLimit = UPLOAD_SIZE_LIMITS[normalizedMimeType] || 5 * 1024 * 1024;
 
-  if (buffer.byteLength > 5 * 1024 * 1024) {
-    throw new Error("Images must be 5 MB or smaller.");
+  if (buffer.byteLength > sizeLimit) {
+    throw new Error(
+      normalizedMimeType === "application/pdf"
+        ? "PDF files must be 20 MB or smaller."
+        : "Images must be 5 MB or smaller.",
+    );
+  }
+
+  if (normalizedMimeType === "application/pdf" && buffer.subarray(0, 5).toString("utf8") !== "%PDF-") {
+    throw new Error("The uploaded PDF file could not be verified.");
   }
 
   const stem = sanitizeFileStem(payload.filename);
@@ -312,11 +383,47 @@ function resolveStaticFile(requestPath) {
   const publicPath = ROUTE_MAP[cleanPath] || cleanPath;
   const filePath = path.normalize(path.join(PUBLIC_DIR, publicPath.replace(/^\/+/, "")));
 
-  if (!filePath.startsWith(PUBLIC_DIR)) {
+  if (!isInsideDirectory(filePath, PUBLIC_DIR)) {
     return "";
   }
 
   return filePath;
+}
+
+function resolveUploadFile(requestPath) {
+  try {
+    const uploadPath = decodeURIComponent(requestPath.replace(/^\/uploads\/?/, ""));
+
+    if (!uploadPath || uploadPath.includes("\0")) {
+      return "";
+    }
+
+    const filePath = path.normalize(path.join(UPLOAD_DIR, uploadPath));
+
+    if (!isInsideDirectory(filePath, UPLOAD_DIR)) {
+      return "";
+    }
+
+    return filePath;
+  } catch {
+    return "";
+  }
+}
+
+async function serveFile(filePath, response, cacheControl = "public, max-age=604800") {
+  try {
+    const content = await readFile(filePath);
+    const extension = path.extname(filePath).toLowerCase();
+    const contentType = MIME_TYPES[extension] || "application/octet-stream";
+
+    response.writeHead(200, {
+      "Cache-Control": cacheControl,
+      "Content-Type": contentType,
+    });
+    response.end(content);
+  } catch {
+    sendText(response, 404, "Not found.");
+  }
 }
 
 async function serveStaticFile(requestPath, response) {
@@ -327,22 +434,24 @@ async function serveStaticFile(requestPath, response) {
     return;
   }
 
-  try {
-    const content = await readFile(filePath);
-    const extension = path.extname(filePath).toLowerCase();
-    const contentType = MIME_TYPES[extension] || "application/octet-stream";
+  const extension = path.extname(filePath).toLowerCase();
+  const cacheControl =
+    extension === ".html" || extension === ".css" || extension === ".js"
+      ? "no-store"
+      : "public, max-age=604800";
 
-    response.writeHead(200, {
-      "Cache-Control":
-        extension === ".html" || extension === ".css" || extension === ".js"
-          ? "no-store"
-          : "public, max-age=604800",
-      "Content-Type": contentType,
-    });
-    response.end(content);
-  } catch {
-    sendText(response, 404, "Not found.");
+  await serveFile(filePath, response, cacheControl);
+}
+
+async function serveUploadedFile(requestPath, response) {
+  const filePath = resolveUploadFile(requestPath);
+
+  if (!filePath) {
+    sendText(response, 403, "Forbidden");
+    return;
   }
+
+  await serveFile(filePath, response);
 }
 
 await ensureDataFiles();
@@ -382,7 +491,7 @@ const server = http.createServer(async (request, response) => {
         return;
       }
 
-      await writeJson(CONTENT_FILE, payload.content);
+      await writeContent(payload.content);
       sendJson(response, 200, {
         ok: true,
         message: "Portfolio content saved.",
@@ -395,18 +504,23 @@ const server = http.createServer(async (request, response) => {
         return;
       }
 
-      const payload = await getRequestBody(request, 8 * 1024 * 1024);
-      const uploadedUrl = await saveUploadedImage(payload);
+      const payload = await getRequestBody(request, 30 * 1024 * 1024);
+      const uploadedUrl = await saveUploadedFile(payload);
       sendJson(response, 201, {
         ok: true,
         url: uploadedUrl,
-        message: "Image uploaded.",
+        message: "File uploaded.",
       });
       return;
     }
 
     if (request.method === "GET" && url.pathname === "/api/health") {
       sendJson(response, 200, { ok: true });
+      return;
+    }
+
+    if (request.method === "GET" && url.pathname.startsWith("/uploads/")) {
+      await serveUploadedFile(url.pathname, response);
       return;
     }
 
@@ -468,4 +582,6 @@ const server = http.createServer(async (request, response) => {
 
 server.listen(PORT, () => {
   console.log(`Portfolio server running at http://localhost:${PORT}`);
+  console.log(`Portfolio content file: ${CONTENT_FILE}`);
+  console.log(`Portfolio uploads directory: ${UPLOAD_DIR}`);
 });

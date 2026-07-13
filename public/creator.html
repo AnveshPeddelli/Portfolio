@@ -6,7 +6,7 @@
     <meta name="robots" content="noindex, nofollow" />
     <title>Owner Console | Portfolio</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="stylesheet" href="/styles.css?v=20260416-owner" />
+    <link rel="stylesheet" href="/styles.css?v=20260713-manager" />
   </head>
   <body data-page="creator">
     <div class="ambient ambient-left"></div>
@@ -113,19 +113,19 @@
             <form class="panel creator-card" id="upload-form">
               <div class="subsection-head compact">
                 <div>
-                  <span class="subsection-kicker">Images</span>
-                  <h3>Upload a JPG, PNG, or WebP</h3>
+                  <span class="subsection-kicker">Media</span>
+                  <h3>Upload a JPG, PNG, WebP, or PDF</h3>
                 </div>
               </div>
               <label>
-                <span>Image file</span>
-                <input type="file" name="image" accept="image/png,image/jpeg,image/webp" required />
+                <span>Media file</span>
+                <input type="file" name="image" accept="image/png,image/jpeg,image/webp,application/pdf,.pdf" required />
               </label>
-              <button class="button" type="submit">Upload image</button>
+              <button class="button" type="submit">Upload file</button>
               <p class="form-status" id="upload-status" role="status" aria-live="polite"></p>
               <label>
-                <span>Uploaded image URL</span>
-                <input id="uploaded-url" readonly placeholder="Upload an image to get a URL" />
+                <span>Uploaded media URL</span>
+                <input id="uploaded-url" readonly placeholder="Upload a file to get a URL" />
               </label>
             </form>
           </div>
@@ -220,7 +220,15 @@
                 </label>
                 <label class="full-span">
                   <span>Body paragraphs</span>
-                  <textarea name="body" rows="7" placeholder="Write each paragraph on a new line." required></textarea>
+                  <textarea name="body" rows="7" placeholder="Write each paragraph on a new line, or attach a PDF below."></textarea>
+                </label>
+                <label class="full-span">
+                  <span>PDF file</span>
+                  <input type="file" name="pdfFile" accept="application/pdf,.pdf" />
+                </label>
+                <label class="full-span">
+                  <span>PDF URL</span>
+                  <input name="pdfUrl" placeholder="/uploads/your-post.pdf" />
                 </label>
                 <label class="full-span">
                   <span>Image URL</span>
@@ -228,8 +236,92 @@
                 </label>
               </div>
               <button class="button" type="submit">Add post</button>
+              <p class="form-status" id="post-status" role="status" aria-live="polite"></p>
             </form>
           </div>
+
+          <section class="section section-framed creator-card">
+            <div class="subsection-head">
+              <div>
+                <span class="subsection-kicker">Blog manager</span>
+                <h3>Review, edit, and delete posts</h3>
+              </div>
+              <div class="manager-controls">
+                <select id="post-filter" aria-label="Filter posts by stream">
+                  <option value="all">All posts</option>
+                  <option value="techBlogs">Tech blog</option>
+                  <option value="travelBlogs">Travel/adventure blog</option>
+                </select>
+                <input id="post-search" type="search" placeholder="Search posts" />
+              </div>
+            </div>
+
+            <div class="post-manager-grid">
+              <div class="post-list-panel">
+                <div class="post-list" id="post-list"></div>
+                <p class="form-status" id="post-manager-status" role="status" aria-live="polite"></p>
+              </div>
+
+              <form class="post-edit-form" id="post-edit-form" hidden>
+                <div class="subsection-head compact">
+                  <div>
+                    <span class="subsection-kicker">Selected post</span>
+                    <h3 id="post-edit-heading">Edit post</h3>
+                  </div>
+                </div>
+                <div class="form-grid">
+                  <label>
+                    <span>Stream</span>
+                    <select name="kind">
+                      <option value="techBlogs">Tech blog</option>
+                      <option value="travelBlogs">Travel/adventure blog</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>Date</span>
+                    <input name="date" type="date" />
+                  </label>
+                  <label class="full-span">
+                    <span>Title</span>
+                    <input name="title" required />
+                  </label>
+                  <label class="full-span">
+                    <span>Excerpt</span>
+                    <textarea name="excerpt" rows="3" required></textarea>
+                  </label>
+                  <label>
+                    <span>Read time</span>
+                    <input name="readTime" placeholder="4 min read" />
+                  </label>
+                  <label>
+                    <span>Tags</span>
+                    <input name="tags" placeholder="Systems, Travel, Notes" />
+                  </label>
+                  <label class="full-span">
+                    <span>Body paragraphs</span>
+                    <textarea name="body" rows="7" placeholder="Write each paragraph on a new line, or use a PDF URL."></textarea>
+                  </label>
+                  <label class="full-span">
+                    <span>Replace PDF file</span>
+                    <input type="file" name="pdfFile" accept="application/pdf,.pdf" />
+                  </label>
+                  <label class="full-span">
+                    <span>PDF URL</span>
+                    <input name="pdfUrl" placeholder="/uploads/your-post.pdf" />
+                  </label>
+                  <label class="full-span">
+                    <span>Image URL</span>
+                    <input name="image" placeholder="/uploads/your-image.webp" />
+                  </label>
+                </div>
+                <div class="form-actions">
+                  <button class="button" type="submit">Save changes</button>
+                  <button class="button button-ghost" type="button" id="cancel-post-edit">Cancel</button>
+                  <p class="form-status" id="post-edit-status" role="status" aria-live="polite"></p>
+                </div>
+              </form>
+            </div>
+          </section>
 
           <section class="section section-framed creator-card">
             <div class="subsection-head">
@@ -254,6 +346,6 @@
       </main>
     </div>
 
-    <script type="module" src="/creator.js?v=20260416-owner"></script>
+    <script type="module" src="/creator.js?v=20260713-manager"></script>
   </body>
 </html>

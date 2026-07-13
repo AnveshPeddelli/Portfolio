@@ -38,7 +38,7 @@ async function init() {
   bindEvents();
 
   try {
-    state.content = await fetchJson("data/site-content.json");
+    state.content = await loadContent();
     state.stories = buildStories(state.content);
     renderShell();
     renderPage();
@@ -166,6 +166,18 @@ async function fetchJson(url) {
   }
 
   return response.json();
+}
+
+async function loadContent() {
+  if (window.location.protocol !== "file:") {
+    try {
+      return await fetchJson("/api/content");
+    } catch {
+      // Static hosts do not have the API route, so fall back to the generated JSON file.
+    }
+  }
+
+  return fetchJson("data/site-content.json");
 }
 
 function resolveHref(value = "") {
@@ -1160,6 +1172,9 @@ function createProjectCard(project) {
 }
 
 function createStoryCard(story) {
+  const pdfUrl = getStoryPdfUrl(story);
+  const tags = getStoryTags(story);
+
   return `
     <article class="story-card reveal">
       ${story.image ? `<img class="card-media" src="${escapeAttribute(resolveHref(story.image))}" alt="${escapeAttribute(story.title)} cover" loading="lazy" />` : ""}
@@ -1171,15 +1186,24 @@ function createStoryCard(story) {
       <p>${escapeHtml(story.excerpt)}</p>
       <div class="story-meta">
         <span>${escapeHtml(story.readTime)}</span>
-        <span>${escapeHtml(story.tags.join(" | "))}</span>
+        ${tags.length ? `<span>${escapeHtml(tags.join(" | "))}</span>` : ""}
+        ${pdfUrl ? `<span>PDF post</span>` : ""}
       </div>
       <div class="project-links">
         <button class="text-link" type="button" data-story-slug="${escapeAttribute(story.slug)}">
-          Read the full piece
+          ${pdfUrl ? "Open PDF post" : "Read the full piece"}
         </button>
       </div>
     </article>
   `;
+}
+
+function getStoryPdfUrl(story) {
+  return typeof story.pdfUrl === "string" ? story.pdfUrl.trim() : "";
+}
+
+function getStoryTags(story) {
+  return Array.isArray(story.tags) ? story.tags : [];
 }
 
 function createContactCard(title, value, href) {
@@ -1251,6 +1275,31 @@ function openStoryModal(slug) {
     return;
   }
 
+  const pdfUrl = getStoryPdfUrl(story);
+  const resolvedPdfUrl = pdfUrl ? resolveHref(pdfUrl) : "";
+  const tags = getStoryTags(story);
+  const storyBody = pdfUrl
+    ? `
+      <div class="pdf-viewer">
+        <iframe
+          class="pdf-frame"
+          src="${escapeAttribute(resolvedPdfUrl)}"
+          title="${escapeAttribute(`${story.title} PDF`)}"
+        ></iframe>
+        <p class="pdf-fallback">
+          <a class="text-link" href="${escapeAttribute(resolvedPdfUrl)}" target="_blank" rel="noreferrer">
+            Open PDF in a new tab
+          </a>
+        </p>
+      </div>
+    `
+    : `
+      <div class="story-body">
+        ${(story.body || []).map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join("")}
+      </div>
+    `;
+
+  shell.modal.classList.toggle("has-pdf", Boolean(pdfUrl));
   shell.modalContent.innerHTML = `
     <span class="eyebrow">${escapeHtml(story.label)}</span>
     <h3>${escapeHtml(story.title)}</h3>
@@ -1258,15 +1307,14 @@ function openStoryModal(slug) {
     <div class="story-meta">
       <span>${formatDate(story.date)}</span>
       <span>${escapeHtml(story.readTime)}</span>
-      <span>${escapeHtml(story.tags.join(" | "))}</span>
+      ${tags.length ? `<span>${escapeHtml(tags.join(" | "))}</span>` : ""}
+      ${pdfUrl ? `<span>PDF post</span>` : ""}
     </div>
-    <div class="story-body">
-      ${story.body.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join("")}
-    </div>
+    ${storyBody}
   `;
 
   shell.modal.showModal();
-  void trackEvent("story_open", { slug: story.slug, kind: story.kind, page });
+  void trackEvent("story_open", { slug: story.slug, kind: story.kind, hasPdf: Boolean(pdfUrl), page });
 }
 
 function closeStoryModal() {

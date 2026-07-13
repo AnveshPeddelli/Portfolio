@@ -338,20 +338,14 @@
   ],
   "techBlogs": [
     {
-      "slug": "systems-before-screens",
-      "title": "Systems Before Screens",
-      "date": "2026-02-14",
-      "readTime": "6 min read",
-      "tags": [
-        "Architecture",
-        "Product Thinking"
-      ],
-      "excerpt": "Why the best frontend work often begins with calmer backend and content decisions.",
-      "body": [
-        "Some of the hardest UI problems disappear once the underlying flow becomes clear. I have learned to step back, shape the information, and only then design the interaction.",
-        "That approach creates faster products and calmer teams. Instead of decorating confusion, you create a system that can support growth.",
-        "The result is not just a better screen. It is a more durable product decision."
-      ]
+      "title": "O-Chat",
+      "slug": "o-chat",
+      "date": "2026-07-13",
+      "readTime": "4 min read",
+      "excerpt": "Want to chat with your office collegue with utmost security and privacy. This the the app - \"O-Chat\"",
+      "tags": [],
+      "body": [],
+      "pdfUrl": "/uploads/1783930786697-18b640fa-o-chat-portfolio-report.pdf"
     },
     {
       "slug": "lightweight-tools-win",
@@ -386,24 +380,7 @@
       ]
     }
   ],
-  "travelBlogs": [
-    {
-      "slug": "sunrise-ridge-notes",
-      "title": "Sunrise Ridge Notes",
-      "date": "2026-01-05",
-      "readTime": "4 min read",
-      "tags": [
-        "Hiking",
-        "Reflection"
-      ],
-      "excerpt": "A short journal entry on what early climbs teach about pacing, patience, and presence.",
-      "body": [
-        "The climb started in darkness, which made every small light feel earned. There is something useful about moving before you can see the whole path.",
-        "By the time the ridge opened, the effort had already done its work. The view was a reward, but the real lesson was pace.",
-        "Travel keeps reminding me that progress does not always need noise."
-      ]
-    }
-  ],
+  "travelBlogs": [],
   "journeyFocus": {
     "intro": "This side stays curated on purpose. It adds perspective without taking focus away from the work.",
     "themes": [

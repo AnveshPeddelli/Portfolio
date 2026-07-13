@@ -1,3 +1,4 @@
 node_modules/
 .server*.log
-public/uploads/
+data/visitors.json
+data/messages.json

@@ -894,6 +894,97 @@ button {
   justify-self: start;
 }
 
+.manager-controls {
+  display: grid;
+  grid-template-columns: minmax(150px, max-content) minmax(180px, 280px);
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.post-manager-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(320px, 1.05fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.post-list-panel,
+.post-edit-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.post-list {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.managed-post-card {
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: #121313;
+}
+
+.managed-post-card.empty-state p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.managed-post-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) max-content;
+  gap: 1rem;
+  align-items: start;
+}
+
+.managed-post-card h4 {
+  margin: 0.8rem 0 0.45rem;
+  font-size: 1.08rem;
+  line-height: 1.25;
+}
+
+.managed-post-card p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.managed-post-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.managed-post-actions .button {
+  min-height: 2.45rem;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.72rem;
+}
+
+.button-danger {
+  border-color: rgba(220, 83, 70, 0.54);
+  background: rgba(220, 83, 70, 0.14);
+  color: #ffb5ac;
+}
+
+:root[data-theme="light"] .button-danger {
+  border-color: rgba(176, 53, 43, 0.42);
+  background: rgba(176, 53, 43, 0.1);
+  color: #b0352b;
+}
+
+.post-edit-form[hidden] {
+  display: none;
+}
+
+.post-edit-form {
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.03);
+}
+
 .json-editor {
   min-height: 28rem;
   font-family: "Cascadia Mono", "Consolas", monospace;
@@ -966,6 +1057,10 @@ textarea {
   background: transparent;
 }
 
+.story-modal.has-pdf {
+  width: min(1100px, calc(100% - 2rem));
+}
+
 .story-modal::backdrop {
   background: rgba(7, 16, 27, 0.55);
   backdrop-filter: blur(8px);
@@ -998,6 +1093,26 @@ textarea {
 }
 
 .story-body p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.pdf-viewer {
+  display: grid;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.pdf-frame {
+  width: 100%;
+  height: min(76vh, 860px);
+  min-height: 520px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.pdf-fallback {
   margin: 0;
   color: var(--muted);
 }
@@ -1152,7 +1267,8 @@ textarea {
   .hero-section,
   .page-banner,
   .split-layout,
-  .contact-layout {
+  .contact-layout,
+  .post-manager-grid {
     grid-template-columns: 1fr;
   }
 
@@ -1188,14 +1304,25 @@ textarea {
   .hero-actions,
   .form-grid,
   .auth-panel,
-  .metric-grid {
+  .metric-grid,
+  .manager-controls,
+  .managed-post-main {
     grid-template-columns: 1fr;
+  }
+
+  .managed-post-actions {
+    justify-content: flex-start;
   }
 
   .footer,
   .form-actions {
     flex-direction: column;
     align-items: start;
+  }
+
+  .pdf-frame {
+    height: 70vh;
+    min-height: 460px;
   }
 
   .nav-actions {
@@ -1323,6 +1450,12 @@ body,
 .button-ghost {
   background: rgba(0, 0, 0, 0.24);
   color: var(--accent);
+}
+
+.button-danger {
+  border-color: rgba(220, 83, 70, 0.54);
+  background: rgba(220, 83, 70, 0.14);
+  color: #ffb5ac;
 }
 
 .section {

@@ -18,7 +18,6 @@ const PUBLIC_FILES_TO_SKIP = new Set([
   "creator.js",
   "insights.html",
   "insights.js",
-  "uploads",
 ]);
 
 async function copyPublicToDocs() {
