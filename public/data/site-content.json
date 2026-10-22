@@ -193,66 +193,6 @@
           "url": "/contact"
         }
       ]
-    },
-    {
-      "title": "LaunchDock",
-      "type": "Portfolio CMS Concept",
-      "summary": "A content-first publishing workflow that lets project updates, tech essays, and media all live in one structured source of truth.",
-      "impact": "Cut content update time from hours to minutes through reusable schemas and dynamic rendering.",
-      "category": "Frontend Experience",
-      "status": "Prototype",
-      "stack": [
-        "JavaScript",
-        "Content Modeling",
-        "Design Systems",
-        "Responsive UI"
-      ],
-      "links": [
-        {
-          "label": "Request walkthrough",
-          "url": "/contact"
-        }
-      ]
-    },
-    {
-      "title": "Ops Relay",
-      "type": "Workflow Automation",
-      "summary": "A compact operations tool for routing recurring updates, reminders, and status signals without adding process drag.",
-      "impact": "Saved the team several manual status-touch hours every week and improved follow-up consistency.",
-      "category": "Automation",
-      "status": "Live utility",
-      "stack": [
-        "Node.js",
-        "Automation Design",
-        "JSON APIs",
-        "Workflow Thinking"
-      ],
-      "links": [
-        {
-          "label": "Review workflow summary",
-          "url": "/contact"
-        }
-      ]
-    },
-    {
-      "title": "Trail Ledger",
-      "type": "Travel Journal Product",
-      "summary": "A journal experience for cataloging routes, moods, photos, and lessons from trips in a calm, mobile-first way.",
-      "impact": "Blended product design, storytelling, and structured data into a single experience that feels personal but organized.",
-      "category": "Product Design",
-      "status": "Personal lab",
-      "stack": [
-        "Frontend Architecture",
-        "UX Writing",
-        "Content Strategy",
-        "Mobile UI"
-      ],
-      "links": [
-        {
-          "label": "Discuss product story",
-          "url": "/contact"
-        }
-      ]
     }
   ],
   "skills": [
