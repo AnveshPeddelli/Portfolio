@@ -145,6 +145,31 @@
   },
   "projects": [
     {
+      "title": "CloudForge — 3D Point Cloud Simplification",
+      "type": "Desktop Application / Processing Engine",
+      "summary": "Built a C++20 desktop application that simplifies recorded 3D point clouds using voxel-grid centroid downsampling. Features synchronized before/after views, sequence playback, voxel inspection, and CPU/CUDA benchmarking.",
+      "impact": "Reduced one real frame from 55,518 points to 9,943 centroids—82.09% fewer points. A separate 30-frame benchmark measured 4.43× lower median processing latency with CUDA versus the single-threaded CPU reference; all 900 paired output checks passed.",
+      "category": "C++ / GPU Computing",
+      "status": "Completed MVP",
+      "stack": [
+        "C++20",
+        "CUDA",
+        "CUB",
+        "OpenGL",
+        "GLFW",
+        "CMake",
+        "GoogleTest",
+        "WSL2"
+      ],
+      "links": [
+        {
+          "label": "View code & demo",
+          "url": "https://github.com/AnveshPeddelli/CloudForge"
+        }
+      ],
+      "image": "https://github.com/AnveshPeddelli/CloudForge/blob/main/output/images/windows-playback.png?raw=true"
+    },
+    {
       "title": "SignalBoard",
       "type": "Analytics Platform",
       "summary": "A lightweight internal analytics workspace that turned fragmented product events into one decision layer for the team.",
@@ -346,38 +371,6 @@
       "tags": [],
       "body": [],
       "pdfUrl": "/uploads/1783930786697-18b640fa-o-chat-portfolio-report.pdf"
-    },
-    {
-      "slug": "lightweight-tools-win",
-      "title": "Lightweight Tools Win More Often Than We Admit",
-      "date": "2025-11-03",
-      "readTime": "5 min read",
-      "tags": [
-        "Automation",
-        "Execution"
-      ],
-      "excerpt": "A note on building the smallest useful internal tool instead of another broad platform.",
-      "body": [
-        "Teams usually do not need a sprawling platform to fix a repetitive problem. They need a clean workflow that saves time immediately.",
-        "When a tool is simple enough to understand in one sitting, adoption happens faster and maintenance stays realistic.",
-        "Small tools earn trust. Trust buys room for bigger ideas later."
-      ]
-    },
-    {
-      "slug": "writing-as-engineering",
-      "title": "Writing Is Part of Engineering",
-      "date": "2025-08-21",
-      "readTime": "4 min read",
-      "tags": [
-        "Communication",
-        "Career"
-      ],
-      "excerpt": "Clear writing is not a side skill. It is how decisions survive the meeting that created them.",
-      "body": [
-        "Code changes shape the product, but explanations shape the team. If an idea cannot be explained simply, it often is not ready.",
-        "I treat notes, case studies, and status updates as part of the build process rather than admin work.",
-        "Strong writing shortens feedback loops and makes collaboration easier."
-      ]
     }
   ],
   "travelBlogs": [],
