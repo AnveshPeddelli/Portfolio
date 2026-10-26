@@ -300,18 +300,7 @@
       "description": "Using travel to reset perspective, notice detail, and bring more texture into both life and work."
     }
   ],
-  "techBlogs": [
-    {
-      "title": "O-Chat",
-      "slug": "o-chat",
-      "date": "2026-07-13",
-      "readTime": "4 min read",
-      "excerpt": "Want to chat with your office collegue with utmost security and privacy. This the the app - \"O-Chat\"",
-      "tags": [],
-      "body": [],
-      "pdfUrl": "/uploads/1783930786697-18b640fa-o-chat-portfolio-report.pdf"
-    }
-  ],
+  "techBlogs": [],
   "travelBlogs": [],
   "journeyFocus": {
     "intro": "This side stays curated on purpose. It adds perspective without taking focus away from the work.",
