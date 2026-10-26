@@ -145,6 +145,30 @@
   },
   "projects": [
     {
+      "title": "O-Chat — Encrypted LAN Chat",
+      "type": "Desktop Communication Tool",
+      "summary": "A lightweight C++ chat application for real-time communication over a local network. Users can host or join rooms, exchange encrypted messages, and chat with multiple participants without accounts, cloud services, or saved chat history.",
+      "impact": "Built a complete multi-client messaging prototype with asynchronous TCP networking, queued message delivery, and AES-256-GCM encryption. Demonstrates practical skills in event-driven architecture, session management, and modular C++ development.",
+      "category": "C++ & Systems Programming",
+      "status": "Functional Prototype",
+      "stack": [
+        "C++17",
+        "Asio",
+        "TCP/IP",
+        "AES-256-GCM",
+        "Windows CNG",
+        "CMake",
+        "vcpkg"
+      ],
+      "links": [
+        {
+          "label": "View Source on GitHub",
+          "url": "https://github.com/AnveshPeddelli/O-Chat"
+        }
+      ],
+      "image": "https://raw.githubusercontent.com/AnveshPeddelli/O-Chat/main/portfolio/assets/poster.svg"
+    },
+    {
       "title": "CloudForge — 3D Point Cloud Simplification",
       "type": "Desktop Application / Processing Engine",
       "summary": "Built a C++20 desktop application that simplifies recorded 3D point clouds using voxel-grid centroid downsampling. Features synchronized before/after views, sequence playback, voxel inspection, and CPU/CUDA benchmarking.",
@@ -168,31 +192,6 @@
         }
       ],
       "image": "https://github.com/AnveshPeddelli/CloudForge/blob/main/output/images/windows-playback.png?raw=true"
-    },
-    {
-      "title": "SignalBoard",
-      "type": "Analytics Platform",
-      "summary": "A lightweight internal analytics workspace that turned fragmented product events into one decision layer for the team.",
-      "impact": "Reduced weekly reporting time by 70% and helped the product team catch adoption drops within the first release day.",
-      "category": "Backend Systems",
-      "status": "Case study ready",
-      "stack": [
-        "TypeScript",
-        "Node.js",
-        "Event Tracking",
-        "Data Visualization",
-        "Performance Tuning"
-      ],
-      "links": [
-        {
-          "label": "Request case study",
-          "url": "/contact"
-        },
-        {
-          "label": "Talk through architecture",
-          "url": "/contact"
-        }
-      ]
     }
   ],
   "skills": [
