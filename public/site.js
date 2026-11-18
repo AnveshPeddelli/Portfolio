@@ -1,3 +1,4 @@
+import { renderDocument } from "./document.js";
 const page = document.body.dataset.page || "home";
 const THEME_STORAGE_KEY = "portfolio-theme";
 const PAGE_FILES = {
@@ -9,9 +10,9 @@ const PAGE_FILES = {
 };
 const routes = [
   { href: PAGE_FILES.home, label: "Home", page: "home" },
-  { href: PAGE_FILES.professional, label: "Professional", page: "professional" },
-  { href: PAGE_FILES.work, label: "Work", page: "work" },
-  { href: PAGE_FILES.journey, label: "Journey", page: "journey" },
+  { href: PAGE_FILES.professional, label: "About", page: "professional" },
+  { href: PAGE_FILES.work, label: "Projects", page: "work" },
+  { href: PAGE_FILES.journey, label: "Writing", page: "journey" },
   { href: PAGE_FILES.contact, label: "Contact", page: "contact" },
 ];
 
@@ -43,6 +44,7 @@ async function init() {
     renderShell();
     renderPage();
     setupRevealAnimations();
+    setupHeroMotion();
     void trackEvent("pageview", {
       path: window.location.pathname,
       title: document.title,
@@ -125,7 +127,7 @@ function bindEvents() {
 }
 
 function getInitialTheme() {
-  return "dark";
+  return window.localStorage.getItem(THEME_STORAGE_KEY) === "light" ? "light" : "dark";
 }
 
 function applyTheme(theme, persist = true) {
@@ -279,7 +281,7 @@ function renderShell() {
         <span class="brand-mark">${escapeHtml(initials)}</span>
         <span class="brand-copy">
           <strong>${escapeHtml(profile.name)}</strong>
-          <small>My Portfolio</small>
+          <small>Software developer</small>
         </span>
       </a>
       <nav class="topnav" aria-label="Primary">
@@ -299,8 +301,9 @@ function renderShell() {
           .join("")}
       </nav>
       <div class="nav-actions">
+        <button class="theme-toggle" type="button" data-theme-toggle><span data-theme-label>Light</span></button>
         <a class="button button-ghost" href="${PAGE_FILES.contact}" data-track-link data-track-label="Header CTA">
-          Hire me
+          Let’s talk
         </a>
       </div>
     </div>
@@ -310,7 +313,7 @@ function renderShell() {
     <div class="footer">
       <p>
         ${escapeHtml(profile.name)} | ${new Date().getFullYear()} |
-        Software, product thinking, and personal stories.
+        Built with curiosity. Made with care.
       </p>
       <div class="footer-links">
         <a href="${PAGE_FILES.work}" data-track-link data-track-label="Footer: Work">Selected work</a>
@@ -347,544 +350,53 @@ function renderPage() {
 }
 
 function renderHomePage() {
-  const { profile, professionalFocus, journeyFocus, projects } = state.content;
-  const featuredProjects = projects.slice(0, 3);
-  const recentStories = state.stories.slice(0, 2);
-  const heroPhoto = resolveHref(profile.photoUrl || "assets/anvesh-portfolio-pic.jpg");
-  const firstName = (profile.name || "Anvesh").split(" ")[0] || "Anvesh";
-  const visibleSocialLinks = getVisibleSocialLinks(profile);
-  const services = [
-    {
-      number: "01",
-      title: "Development",
-      description:
-        professionalFocus.coreStrengths[1] ||
-        "Building lightweight full-stack experiences with a focus on performance.",
-    },
-    {
-      number: "02",
-      title: "Design",
-      description:
-        "Responsive interfaces, clean content structure, and product pages that feel easy to scan.",
-    },
-    {
-      number: "03",
-      title: "Systems",
-      description:
-        professionalFocus.coreStrengths[2] ||
-        "Internal tools, dashboards, and automations that remove repetitive work.",
-    },
-  ];
-  const portfolioTabs = ["Design", "Build", "Systems", "Writing"];
-
+  const { profile, projects, skills, professionalFocus } = state.content;
+  const social = getVisibleSocialLinks(profile);
+  const headline = String(profile.headline || "").trim().split(/\s+/);
+  const lastWord = headline.pop() || "";
   shell.main.innerHTML = `
-    <section class="section hero-section page-hero cinematic-hero">
-      <img
-        class="hero-photo"
-        src="${escapeAttribute(heroPhoto)}"
-        alt="${escapeAttribute(profile.name)} portrait"
-        fetchpriority="high"
-      />
-      <div class="hero-vignette" aria-hidden="true"></div>
-      <div class="hero-copy">
-        <span class="eyebrow">My Portfolio</span>
-        <h1>Hi, I am ${escapeHtml(firstName)}.</h1>
+    <section class="home-hero section">
+      <div class="home-hero-copy"><span class="availability"><span></span>${escapeHtml(profile.availability)}</span>
+        <p class="hero-intro">Hello, I’m ${escapeHtml(profile.name)}.</p>
+        <h1>${escapeHtml(headline.join(" "))} <em>${escapeHtml(lastWord)}</em></h1><svg class="hero-ink-trail" viewBox="0 0 280 24" aria-hidden="true"><path d="M5 15C58 5 177 3 264 10M35 20C104 11 198 10 276 16" /></svg>
         <p class="hero-description">${escapeHtml(profile.subheadline)}</p>
-        <div class="hero-actions">
-          <a class="button" href="${PAGE_FILES.professional}" data-track-link data-track-label="Home: Professional">Show profile</a>
-          <a class="button button-ghost" href="${PAGE_FILES.work}" data-track-link data-track-label="Home: Work">Know more</a>
-        </div>
-        <ul class="stack-list hero-stack">
-          ${profile.highlights.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
-        </ul>
+        <div class="hero-actions"><a class="button" href="${PAGE_FILES.work}">Explore my projects <span aria-hidden="true">↗</span></a><a class="button button-ghost" href="${PAGE_FILES.contact}">Get in touch</a></div>
+        <div class="hero-footnote"><span>${escapeHtml(profile.location)}</span>${social.filter(link => link.label !== 'Email').map(link => `<a href="${escapeAttribute(resolveHref(link.url))}" target="_blank" rel="noreferrer">${escapeHtml(link.label)} ↗</a>`).join('')}</div>
       </div>
-      <a class="scroll-cue" href="#services" aria-label="Jump to services">
-        <span aria-hidden="true"></span>
-      </a>
+      <div class="hero-portrait"><img src="${escapeAttribute(resolveHref(profile.photoUrl))}" alt="${escapeAttribute(profile.name)}" fetchpriority="high"></div><a class="hero-scroll" href="#selected-work"><span>Take a look around</span><span aria-hidden="true">↓</span></a>
     </section>
-
-    <section class="section section-framed portfolio-strip">
-      <div class="portfolio-strip-head">
-        <div>
-          <span class="section-kicker">My Portfolio</span>
-          <h2>Selected work with a sharper visual edge.</h2>
-        </div>
-        <div class="portfolio-tabs">
-          ${portfolioTabs.map((tab) => `<span>${escapeHtml(tab)}</span>`).join("")}
-        </div>
-      </div>
-      <div class="gallery-strip">
-        <a
-          class="gallery-card gallery-photo reveal"
-          href="${PAGE_FILES.professional}"
-          style="--gallery-image: url('${escapeAttribute(heroPhoto)}')"
-          data-track-link
-          data-track-label="Home gallery: Profile"
-        >
-          <span>Profile</span>
-          <strong>${escapeHtml(profile.name)}</strong>
-        </a>
-        ${featuredProjects
-          .map(
-            (project, index) => `
-              <a
-                class="gallery-card gallery-card-${index + 1} reveal"
-                href="${PAGE_FILES.work}"
-                data-track-link
-                data-track-label="Home gallery: ${escapeAttribute(project.title)}"
-              >
-                <span>${escapeHtml(project.category)}</span>
-                <strong>${escapeHtml(project.title)}</strong>
-              </a>
-            `,
-          )
-          .join("")}
-      </div>
+    <section class="proof-strip" aria-label="CloudForge project results">${profile.heroMetrics.map(metric => `<div><strong>${escapeHtml(metric.value)}</strong><span>${escapeHtml(metric.label)}</span></div>`).join('')}</section>
+    <section class="section home-projects" id="selected-work"><div class="section-heading"><div><span class="eyebrow">Things I’ve built</span><h2>From a problem to a working system.</h2></div><a class="text-link" href="${PAGE_FILES.work}">All projects ↗</a></div>
+      <div class="project-grid">${projects.slice(0,2).map(createProjectCard).join('')}</div>
     </section>
-
-    <section class="section section-framed services-section" id="services">
-      <div class="section-head centered">
-        <span class="section-kicker">Our Services</span>
-        <h2>What I can bring into a team.</h2>
-        <p>${escapeHtml(professionalFocus.intro)}</p>
-      </div>
-      <div class="service-grid">
-        ${services
-          .map(
-            (service) => `
-              <article class="service-card reveal">
-                <span class="service-icon" aria-hidden="true">${escapeHtml(service.number)}</span>
-                <h3>${escapeHtml(service.title)}</h3>
-                <p>${escapeHtml(service.description)}</p>
-              </article>
-            `,
-          )
-          .join("")}
-      </div>
-    </section>
-
-    <section class="section split-layout showcase-section">
-      <div class="panel profile-panel">
-        <div class="subsection-head compact">
-          <div>
-            <span class="subsection-kicker">Quick view</span>
-            <h3>${escapeHtml(profile.availability)}</h3>
-          </div>
-        </div>
-        <p class="quiet-copy">${escapeHtml(profile.headline)}</p>
-        <div class="metric-band compact-metrics">
-          ${profile.heroMetrics.map((metric) => createMetricCard(metric.value, metric.label)).join("")}
-        </div>
-        <div class="project-links">
-          <a class="button" href="${PAGE_FILES.contact}" data-track-link data-track-label="Home: Contact CTA">Start a conversation</a>
-        </div>
-      </div>
-      <div class="panel">
-        <div class="subsection-head compact">
-          <div>
-            <span class="subsection-kicker">Featured work</span>
-            <h3>Project snapshots</h3>
-          </div>
-        </div>
-        <div class="preview-stack">
-          ${featuredProjects.map((project) => createPreviewCard(project.title, project.impact, PAGE_FILES.work)).join("")}
-        </div>
-      </div>
-    </section>
-
-    <section class="section split-layout">
-      <div class="panel">
-        <div class="subsection-head compact">
-          <div>
-            <span class="subsection-kicker">Writing and journey</span>
-            <h3>Recent notes from the journey side</h3>
-          </div>
-        </div>
-        <div class="preview-stack">
-          ${recentStories.map((story) => createStoryPreview(story)).join("")}
-        </div>
-      </div>
-      <div class="panel">
-        <div class="subsection-head compact">
-          <div>
-            <span class="subsection-kicker">Signal</span>
-            <h3>Role fit</h3>
-          </div>
-        </div>
-        <div class="chip-row">
-          ${professionalFocus.roleFit.map((item) => `<span class="chip">${escapeHtml(item)}</span>`).join("")}
-        </div>
-        <p class="quiet-copy">${escapeHtml(journeyFocus.intro)}</p>
-        <div class="social-row">
-          ${visibleSocialLinks
-            .map(
-              (link) => `
-                <a
-                  class="social-link"
-                  href="${escapeAttribute(resolveHref(link.url))}"
-                  ${isHttpUrl(link.url) ? 'target="_blank" rel="noreferrer"' : ""}
-                  data-track-link
-                  data-track-label="Home social: ${escapeAttribute(link.label)}"
-                >
-                  <span>${escapeHtml(link.label)}</span>
-                  <span>Open</span>
-                </a>
-              `,
-            )
-            .join("")}
-        </div>
-      </div>
-    </section>
-  `;
+    <section class="section home-about"><div><span class="eyebrow">A little about me</span><h2>Curious about the details.<br>Focused on the outcome.</h2><p>${escapeHtml(professionalFocus.intro)}</p><a class="text-link" href="${PAGE_FILES.professional}">More about me ↗</a></div><div class="capability-list">${skills.slice(0,3).map((group,index) => `<article><span aria-hidden="true">✦</span><div><h3>${escapeHtml(group.group)}</h3><p>${escapeHtml(group.items.slice(0,4).join(' · '))}</p></div></article>`).join('')}</div></section>
+    ${state.stories.length ? `<section class="section"><div class="section-heading"><div><span class="eyebrow">Away from the keyboard</span><h2>Things learned along the way.</h2></div><a class="text-link" href="${PAGE_FILES.journey}">All writing ↗</a></div><div class="card-grid">${state.stories.slice(0,2).map(createStoryCard).join('')}</div></section>` : ''}
+    <section class="section contact-band"><div><span class="eyebrow">Let’s build something useful</span><h2>A good conversation is a great start.</h2></div><a class="button" href="${PAGE_FILES.contact}">Say hello ↗</a></section>`;
 }
 
 function renderProfessionalPage() {
-  const { profile, professionalFocus, workOverview, skills, achievements, timeline } = state.content;
-  const highlightedTimeline = timeline.slice(0, 3);
-
-  shell.main.innerHTML = `
-    <section class="section section-framed page-section">
-      <div class="page-banner">
-        <div class="section-head compact">
-          <span class="section-kicker">Professional profile</span>
-          <h1>Professional, steady, and built for ownership.</h1>
-          <p>${escapeHtml(professionalFocus.intro)}</p>
-        </div>
-        <div class="page-banner-card">
-          <span class="subsection-kicker">At a glance</span>
-          <h3>${escapeHtml(profile.availability)}</h3>
-          <div class="metric-band compact-metrics">
-            ${workOverview.metrics.slice(0, 2).map((item) => createMetricCard(item.value, item.label)).join("")}
-          </div>
-          <p>${escapeHtml(profile.location)}</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="section split-layout">
-      <div class="panel">
-        <div class="subsection-head compact">
-          <div>
-            <span class="subsection-kicker">Core strengths</span>
-            <h3>What I consistently bring</h3>
-          </div>
-        </div>
-        <div class="strength-strip">
-          ${professionalFocus.coreStrengths
-            .slice(0, 3)
-            .map(
-              (strength, index) => `
-                <article class="strength-card reveal">
-                  <span class="eyebrow">Focus ${index + 1}</span>
-                  <strong>${escapeHtml(strength)}</strong>
-                </article>
-              `,
-            )
-            .join("")}
-        </div>
-        <div class="chip-row">
-          ${professionalFocus.roleFit.map((item) => `<span class="chip">${escapeHtml(item)}</span>`).join("")}
-        </div>
-      </div>
-      <div class="panel">
-        <div class="subsection-head compact">
-          <div>
-            <span class="subsection-kicker">Operating style</span>
-            <h3>Simple principles behind the work</h3>
-          </div>
-        </div>
-        <div class="feature-grid">
-          ${professionalFocus.operatingPrinciples
-            .slice(0, 3)
-            .map((item) => createFeatureCard(item.title, item.description))
-            .join("")}
-        </div>
-      </div>
-    </section>
-
-    <section class="section split-layout">
-      <div class="panel">
-        <div class="subsection-head compact">
-          <div>
-            <span class="subsection-kicker">Capabilities</span>
-            <h3>Skills grouped by working domain</h3>
-          </div>
-        </div>
-        <div class="skill-grid">
-          ${skills
-            .map(
-              (group) => `
-                <article class="skill-card reveal">
-                  <h3>${escapeHtml(group.group)}</h3>
-                  <div class="chip-row">
-                    ${group.items.map((item) => `<span class="chip">${escapeHtml(item)}</span>`).join("")}
-                  </div>
-                </article>
-              `,
-            )
-            .join("")}
-        </div>
-      </div>
-      <div class="panel">
-        <div class="subsection-head compact">
-          <div>
-            <span class="subsection-kicker">Signals</span>
-            <h3>Proof points behind the profile</h3>
-          </div>
-        </div>
-        <div class="achievement-grid">
-          ${achievements
-            .slice(0, 3)
-            .map(
-              (achievement) => `
-                <article class="achievement-card reveal">
-                  <span class="eyebrow">${escapeHtml(achievement.meta)}</span>
-                  <h3>${escapeHtml(achievement.title)}</h3>
-                  <p>${escapeHtml(achievement.description)}</p>
-                </article>
-              `,
-            )
-            .join("")}
-        </div>
-      </div>
-    </section>
-
-    <section class="section split-layout">
-      <div class="panel">
-        <div class="subsection-head compact">
-          <div>
-            <span class="subsection-kicker">Career arc</span>
-            <h3>A short timeline</h3>
-          </div>
-        </div>
-        <div class="timeline">
-          ${highlightedTimeline
-            .map(
-              (entry) => `
-                <article class="timeline-card reveal">
-                  <div class="timeline-head">
-                    <span class="eyebrow">${escapeHtml(entry.year)}</span>
-                    <span class="status-pill">${escapeHtml(entry.subtitle)}</span>
-                  </div>
-                  <h3>${escapeHtml(entry.title)}</h3>
-                  <p>${escapeHtml(entry.description)}</p>
-                </article>
-              `,
-            )
-            .join("")}
-        </div>
-      </div>
-      <div class="panel stack-panel">
-        <div>
-          <span class="subsection-kicker">Professional note</span>
-          <h3>Built to read like a strong candidate profile</h3>
-        </div>
-        <p class="quiet-copy">
-          The goal is clarity: enough signal to show depth, without turning the page
-          into a wall of explanation.
-        </p>
-        <a class="button" href="${PAGE_FILES.work}" data-track-link data-track-label="Professional CTA">See selected work</a>
-      </div>
-    </section>
-  `;
+  const { profile, professionalFocus, skills, achievements } = state.content;
+  shell.main.innerHTML = `<section class="section page-intro"><span class="eyebrow">The person behind the projects</span><h1>Engineering with curiosity<br>and a sense of purpose.</h1><p>${escapeHtml(professionalFocus.intro)}</p><div class="hero-actions"><a class="button" href="${PAGE_FILES.work}">See my work ↗</a>${profile.resumeUrl && profile.resumeUrl !== '#' ? `<a class="button button-ghost" href="${escapeAttribute(resolveHref(profile.resumeUrl))}" target="_blank" rel="noreferrer">View resume</a>` : `<a class="button button-ghost" href="mailto:${escapeAttribute(profile.email)}?subject=Resume%20request">Request resume</a>`}</div></section>
+    <section class="section"><div class="section-heading"><div><span class="eyebrow">Capabilities</span><h2>The tools behind the work.</h2></div></div><div class="skill-grid">${skills.map(group => `<article class="skill-card"><h3>${escapeHtml(group.group)}</h3><div class="chip-row">${group.items.map(item=>`<span class="chip">${escapeHtml(item)}</span>`).join('')}</div></article>`).join('')}</div></section>
+    <section class="section"><div class="section-heading"><div><span class="eyebrow">Evidence in the projects</span><h2>Details that make a difference.</h2></div></div><div class="feature-grid">${achievements.map(item=>`<article class="feature-card"><span class="eyebrow">${escapeHtml(item.meta)}</span><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.description)}</p></article>`).join('')}</div></section>
+    <section class="section home-about"><div><span class="eyebrow">Working style</span><h2>Thoughtful implementation.<br>Clear communication.</h2></div><div><ul class="plain-list">${professionalFocus.coreStrengths.map(item=>`<li>${escapeHtml(item)}</li>`).join('')}</ul><div class="chip-row">${professionalFocus.roleFit.map(item=>`<span class="chip">${escapeHtml(item)}</span>`).join('')}</div></div></section>`;
 }
 
 function renderWorkPage() {
-  const { professionalFocus, workOverview } = state.content;
-
-  shell.main.innerHTML = `
-    <section class="section section-framed page-section">
-      <div class="page-banner">
-        <div class="section-head compact">
-          <span class="section-kicker">Selected work</span>
-          <h1>Work that shows judgment, delivery, and range.</h1>
-          <p>${escapeHtml(workOverview.intro)}</p>
-        </div>
-        <div class="page-banner-card">
-          <span class="subsection-kicker">Snapshot</span>
-          <div class="metric-band compact-metrics">
-            ${workOverview.metrics.slice(0, 4).map((item) => createMetricCard(item.value, item.label)).join("")}
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section split-layout">
-      <div class="panel">
-        <div class="subsection-head compact">
-          <div>
-            <span class="subsection-kicker">What stands out</span>
-            <h3>The delivery patterns across the portfolio</h3>
-          </div>
-        </div>
-        <div class="chip-row">
-          ${professionalFocus.coreStrengths
-            .slice(0, 3)
-            .map((item) => `<span class="chip">${escapeHtml(item)}</span>`)
-            .join("")}
-        </div>
-        <div class="feature-grid">
-          ${workOverview.deliveryThemes
-            .slice(0, 2)
-            .map((item) => createFeatureCard(item.title, item.description))
-            .join("")}
-        </div>
-      </div>
-      <div class="panel">
-        <div class="subsection-head compact">
-          <div>
-            <span class="subsection-kicker">Reading lens</span>
-            <h3>How to evaluate the projects</h3>
-          </div>
-        </div>
-        <div class="feature-grid">
-          ${workOverview.caseStudyLens
-            .slice(0, 3)
-            .map((item) => createFeatureCard(item.title, item.description))
-            .join("")}
-        </div>
-      </div>
-    </section>
-
-    <section class="section section-framed">
-      <div class="subsection-head">
-        <div>
-          <span class="subsection-kicker">Project index</span>
-          <h3>Browse by category</h3>
-        </div>
-        <div class="filter-row" id="project-filters"></div>
-      </div>
-      <div class="card-grid project-grid" id="projects-grid"></div>
-    </section>
-
-    <section class="section split-layout">
-      <div class="panel">
-        <div class="subsection-head compact">
-          <div>
-            <span class="subsection-kicker">Why this page works</span>
-            <h3>Compact on purpose</h3>
-          </div>
-        </div>
-        <p class="quiet-copy">
-          This page keeps the work readable: what shipped, why it mattered, and the
-          kind of thinking behind it.
-        </p>
-      </div>
-      <div class="panel stack-panel">
-        <div>
-          <span class="subsection-kicker">Next move</span>
-          <h3>Want the deeper walkthrough?</h3>
-        </div>
-        <p class="quiet-copy">
-          I can share the fuller case-study version in interviews, hiring loops, or
-          project conversations.
-        </p>
-        <a class="button" href="${PAGE_FILES.contact}" data-track-link data-track-label="Work CTA">Request walkthroughs</a>
-      </div>
-    </section>
-  `;
-
+  shell.main.innerHTML = `<section class="section page-intro"><span class="eyebrow">Ideas, made real</span><h1>Built to solve.<br>Measured to improve.</h1><p>${escapeHtml(state.content.workOverview.intro)}</p></section><section class="section"><div class="filter-row" id="project-filters"></div><div class="project-grid" id="projects-grid"></div></section><section class="section contact-band"><div><span class="eyebrow">Behind the implementation</span><h2>Want to talk through the decisions?</h2></div><a class="button" href="${PAGE_FILES.contact}">Let’s talk ↗</a></section>`;
   renderProjects();
 }
 
 function renderJourneyPage() {
-  const { techBlogs, travelBlogs, journeyFocus } = state.content;
-
-  shell.main.innerHTML = `
-    <section class="section section-framed page-section">
-      <div class="page-banner">
-        <div class="section-head compact">
-          <span class="section-kicker">Journey and writing</span>
-          <h1>Perspective beyond the project list.</h1>
-          <p>${escapeHtml(journeyFocus.intro)}</p>
-        </div>
-        <div class="page-banner-card">
-          <span class="subsection-kicker">Current mix</span>
-          <div class="metric-band compact-metrics">
-            ${createMetricCard(String(techBlogs.length), "Tech essays")}
-            ${createMetricCard(String(travelBlogs.length), "Travel notes")}
-            ${createMetricCard(String(journeyFocus.topicAreas.length), "Topics")}
-            ${createMetricCard("1", "Consistent voice")}
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section split-layout">
-      <div class="panel">
-        <div class="subsection-head compact">
-          <div>
-            <span class="subsection-kicker">Themes</span>
-            <h3>What this side adds</h3>
-          </div>
-        </div>
-        <div class="feature-grid">
-          ${journeyFocus.themes.slice(0, 3).map((item) => createFeatureCard(item.title, item.description)).join("")}
-        </div>
-      </div>
-      <div class="panel">
-        <div class="subsection-head compact">
-          <div>
-            <span class="subsection-kicker">Topics</span>
-            <h3>Recurring subjects</h3>
-          </div>
-        </div>
-        <div class="chip-row">
-          ${journeyFocus.topicAreas.map((item) => `<span class="chip">${escapeHtml(item)}</span>`).join("")}
-        </div>
-        <p class="quiet-copy">
-          Writing and travel stay in the portfolio because they show perspective,
-          communication, and curiosity without distracting from the professional side.
-        </p>
-      </div>
-    </section>
-
-    <section class="section section-framed">
-      <div class="subsection-head">
-        <div>
-          <span class="subsection-kicker">Story library</span>
-          <h3>Browse by stream</h3>
-        </div>
-        <div class="filter-row" id="story-filters"></div>
-      </div>
-      <div class="story-grid" id="stories-grid"></div>
-    </section>
-
-    <section class="section split-layout">
-      <div class="panel">
-        <div class="subsection-head compact">
-          <div>
-            <span class="subsection-kicker">Professional value</span>
-            <h3>Why it belongs in the same portfolio</h3>
-          </div>
-        </div>
-        <div class="feature-grid">
-          ${journeyFocus.professionalValue
-            .map((item) => createFeatureCard("Value", item))
-            .join("")}
-        </div>
-      </div>
-      <div class="panel stack-panel">
-        <div>
-          <span class="subsection-kicker">Stay connected</span>
-          <h3>Open the journal or reach out</h3>
-        </div>
-        <p class="quiet-copy">
-          Open a story for the longer version, or jump to contact if you want to talk
-          about writing, product thinking, or collaboration.
-        </p>
-        <a class="button button-ghost" href="${PAGE_FILES.contact}" data-track-link data-track-label="Journey CTA">Start a conversation</a>
-      </div>
-    </section>
-  `;
-
+  shell.main.innerHTML = `<section class="section page-intro"><span class="eyebrow">Writing & journeys</span><h1>Notes from the code.<br>Stories from the road.</h1><p>${escapeHtml(state.content.journeyFocus.intro)}</p></section><section class="section"><div class="filter-row" id="story-filters"></div><div class="card-grid" id="stories-grid"></div></section>`;
   renderStories();
 }
 
 function renderContactPage() {
   const { profile, contactPrompts, contactDetails } = state.content;
-  const resumeHref = profile.resumeUrl === "#" ? `mailto:${profile.email}` : profile.resumeUrl;
-  const resumeValue = profile.resumeUrl === "#" ? "Available on request" : "Open resume";
+  const hasResume = Boolean(profile.resumeUrl && profile.resumeUrl !== "#");
+  const resumeHref = hasResume ? profile.resumeUrl : `mailto:${profile.email}?subject=Resume%20request`;
+  const resumeValue = hasResume ? "Open resume" : "Available on request";
   const visibleSocialLinks = getVisibleSocialLinks(profile);
 
   shell.main.innerHTML = `
@@ -892,10 +404,9 @@ function renderContactPage() {
       <div class="page-banner">
         <div class="section-head compact">
           <span class="section-kicker">Contact</span>
-          <h1>Direct details and a clean way to reach me.</h1>
+          <h1>Let’s make something worthwhile.</h1>
           <p>
-            Use the form below or email me directly. On the hosted Git version,
-            the form opens your email app with the message prefilled.
+            Have a role, a project, or a technical question in mind? I’d like to hear about it.
           </p>
         </div>
         <div class="page-banner-card">
@@ -918,7 +429,7 @@ function renderContactPage() {
           <div class="subsection-head compact">
             <div>
               <span class="subsection-kicker">Best use</span>
-              <h3>What this contact page is built for</h3>
+              <h3>Good reasons to say hello</h3>
             </div>
           </div>
           <ul class="prompt-list">
@@ -990,17 +501,6 @@ function renderContactPage() {
       </form>
     </section>
 
-    <section class="section section-framed">
-      <div class="section-head compact">
-        <span class="section-kicker">Signals</span>
-        <h2>Simple, direct, and ready to share.</h2>
-      </div>
-      <div class="feature-grid compact-grid">
-        ${createFeatureCard("Email handoff", "The hosted contact form opens a prefilled email so people can reach you without any broken backend dependency.")}
-        ${createFeatureCard("Git-hosted ready", "The public site can be deployed from this repository as static files, which keeps hosting simple and reliable.")}
-        ${createFeatureCard("Best for", contactDetails.bestFor.slice(0, 2).join(" and "))}
-      </div>
-    </section>
   `;
 }
 
@@ -1023,6 +523,7 @@ function renderProjects() {
     .map(
       (category) => `
         <button
+          aria-pressed="${category === state.projectFilter}"
           class="filter-chip ${category === state.projectFilter ? "is-active" : ""}"
           type="button"
           data-project-filter="${escapeAttribute(category)}"
@@ -1059,6 +560,7 @@ function renderStories() {
     .map(
       (filter) => `
         <button
+          aria-pressed="${filter.value === state.storyFilter}"
           class="filter-chip ${filter.value === state.storyFilter ? "is-active" : ""}"
           type="button"
           data-story-filter="${escapeAttribute(filter.value)}"
@@ -1069,7 +571,7 @@ function renderStories() {
     )
     .join("");
 
-  grid.innerHTML = visibleStories.map((story) => createStoryCard(story)).join("");
+  grid.innerHTML = visibleStories.map((story) => createStoryCard(story)).join("") || `<div class="empty-state"><span class="eyebrow">A little space for what’s next</span><h3>No stories published here yet.</h3><p>In the meantime, explore the projects and the ideas behind them.</p><a class="text-link" href="${PAGE_FILES.work}">Explore projects ↗</a></div>`;
   setupRevealAnimations();
 }
 
@@ -1149,10 +651,10 @@ function createProjectCard(project) {
       <p class="project-copy">${escapeHtml(project.summary)}</p>
       <p><strong>Impact:</strong> ${escapeHtml(project.impact)}</p>
       <div class="chip-row">
-        ${project.stack.map((item) => `<span class="tag-pill">${escapeHtml(item)}</span>`).join("")}
+        ${(project.stack || []).map((item) => `<span class="tag-pill">${escapeHtml(item)}</span>`).join("")}
       </div>
       <div class="project-links">
-        ${project.links
+        ${(project.links || [])
           .map(
             (link) => `
               <a
@@ -1278,7 +780,10 @@ function openStoryModal(slug) {
   const pdfUrl = getStoryPdfUrl(story);
   const resolvedPdfUrl = pdfUrl ? resolveHref(pdfUrl) : "";
   const tags = getStoryTags(story);
-  const storyBody = pdfUrl
+  const hasDocument = Array.isArray(story.pages) && story.pages.some(page => /<img\b/i.test(page.html || "") || String(page.html || "").replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ").trim());
+  const storyBody = hasDocument
+    ? `<div class="story-body rich-document">${renderDocument(story.pages, resolveHref)}</div>${pdfUrl ? `<p><a class="text-link" href="${escapeAttribute(resolvedPdfUrl)}" target="_blank" rel="noreferrer">Open attached PDF</a></p>` : ""}`
+    : pdfUrl
     ? `
       <div class="pdf-viewer">
         <iframe
@@ -1373,4 +878,18 @@ function escapeHtml(value) {
 
 function escapeAttribute(value) {
   return escapeHtml(value);
+}
+
+function setupHeroMotion() {
+  const hero = document.querySelector('.home-hero');
+  if (!hero || window.matchMedia('(prefers-reduced-motion: reduce), (pointer: coarse)').matches) return;
+  let frame = 0;
+  hero.addEventListener('pointermove', event => {
+    cancelAnimationFrame(frame);
+    frame = requestAnimationFrame(() => {
+      const rect = hero.getBoundingClientRect();
+      hero.style.setProperty('--portrait-shift', `${((event.clientX - rect.left) / rect.width - .5) * 12}px`);
+    });
+  });
+  hero.addEventListener('pointerleave', () => { cancelAnimationFrame(frame); hero.style.setProperty('--portrait-shift', '0px'); });
 }

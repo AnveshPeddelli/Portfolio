@@ -1,3 +1,4 @@
+import { WritingEditor } from "./writing-editor.js";
 const THEME_STORAGE_KEY = "portfolio-theme";
 const OWNER_KEY_STORAGE = "portfolio-owner-key";
 
@@ -5,7 +6,9 @@ const state = {
   ownerKey: window.sessionStorage.getItem(OWNER_KEY_STORAGE) || "",
   content: null,
   editingPost: null,
-  theme: window.localStorage.getItem(THEME_STORAGE_KEY) === "light" ? "light" : "dark",
+  editingProject: null,
+  activePanel: "personal",
+  theme: window.localStorage.getItem(THEME_STORAGE_KEY) !== "dark" ? "light" : "dark",
 };
 
 const dom = {};
@@ -13,6 +16,12 @@ const dom = {};
 document.addEventListener("DOMContentLoaded", () => {
   collectDom();
   applyTheme(state.theme, false);
+  dom.postWriter = new WritingEditor(dom.postForm.elements.body, uploadFile);
+  dom.travelForm = document.querySelector("#travel-post-form");
+  dom.travelWriter = new WritingEditor(dom.travelForm.elements.body, uploadFile);
+  dom.travelStatus = document.querySelector("#travel-post-status");
+  setupConsole();
+  dom.editWriter = new WritingEditor(dom.postEditForm.elements.body, uploadFile);
   bindEvents();
 
   if (state.ownerKey) {
@@ -63,7 +72,7 @@ function bindEvents() {
 
   dom.profileForm?.addEventListener("submit", (event) => {
     event.preventDefault();
-    saveProfile();
+    void runSave(saveProfile);
   });
 
   dom.uploadForm?.addEventListener("submit", (event) => {
@@ -73,12 +82,12 @@ function bindEvents() {
 
   dom.projectForm?.addEventListener("submit", (event) => {
     event.preventDefault();
-    addProject();
+    void runSave(addProject);
   });
 
   dom.postForm?.addEventListener("submit", (event) => {
     event.preventDefault();
-    void addPost();
+    void runSave(addPost);
   });
 
   dom.postFilter?.addEventListener("change", () => {
@@ -105,7 +114,7 @@ function bindEvents() {
 
   dom.postEditForm?.addEventListener("submit", (event) => {
     event.preventDefault();
-    void updatePost();
+    void runSave(updatePost);
   });
 
   dom.cancelPostEdit?.addEventListener("click", () => {
@@ -192,8 +201,13 @@ function renderEditor() {
   setFormValue(dom.profileForm, "phone", profile.phone);
   setFormValue(dom.profileForm, "headline", profile.headline);
   setFormValue(dom.profileForm, "subheadline", profile.subheadline);
-  setFormValue(dom.profileForm, "resumeUrl", profile.resumeUrl);
+  setFormValue(dom.profileForm, "resumeUrl", profile.resumeUrl === "#" ? "" : profile.resumeUrl);
 
+  ["photoUrl", "availability"].forEach(name => setFormValue(dom.profileForm, name, profile[name]));
+  setFormValue(dom.profileForm, "githubUrl", profile.socialLinks?.find(link => link.label === "GitHub")?.url || "");
+  setFormValue(dom.profileForm, "linkedinUrl", profile.socialLinks?.find(link => link.label === "LinkedIn")?.url || "");
+  renderSkillFields();
+  renderProjectManager();
   dom.jsonEditor.value = JSON.stringify(state.content, null, 2);
   renderPostManager();
 }
@@ -206,20 +220,26 @@ function setFormValue(form, name, value = "") {
   }
 }
 
-function saveProfile() {
+async function saveProfile() {
   const formData = new FormData(dom.profileForm);
-  state.content.profile = {
-    ...state.content.profile,
-    name: String(formData.get("name") || ""),
-    location: String(formData.get("location") || ""),
-    email: String(formData.get("email") || ""),
-    phone: String(formData.get("phone") || ""),
-    headline: String(formData.get("headline") || ""),
-    subheadline: String(formData.get("subheadline") || ""),
-    resumeUrl: String(formData.get("resumeUrl") || "#"),
-  };
-
-  void saveContent("Profile saved.");
+  const previous = structuredClone(state.content);
+  const next = { ...state.content.profile };
+  try {
+    for (const name of ["name", "location", "email", "phone", "headline", "subheadline", "resumeUrl", "photoUrl", "availability"]) next[name] = String(formData.get(name) || "").trim();
+    next.resumeUrl ||= "#";
+    for (const [field, destination] of [["photoFile", "photoUrl"], ["resumeFile", "resumeUrl"]]) {
+      const file = dom.profileForm.elements[field].files[0];
+      if (file) { setStatus(dom.saveStatus, "Uploading files…"); next[destination] = (await uploadFile(file)).url; }
+    }
+    next.socialLinks = (next.socialLinks || []).filter(link => !["GitHub", "LinkedIn", "Email"].includes(link.label));
+    for (const [field, label] of [["githubUrl", "GitHub"], ["linkedinUrl", "LinkedIn"]]) {
+      const url = String(formData.get(field) || "").trim(); if (url) next.socialLinks.push({ label, url });
+    }
+    if (next.email) next.socialLinks.push({ label: "Email", url: `mailto:${next.email}` });
+    state.content.profile = next;
+    if (!await saveContent("Personal information saved.")) state.content = previous;
+    else { dom.profileForm.elements.photoFile.value = ""; dom.profileForm.elements.resumeFile.value = ""; setFormValue(dom.profileForm, "photoUrl", next.photoUrl); setFormValue(dom.profileForm, "resumeUrl", next.resumeUrl); }
+  } catch (error) { state.content = previous; setStatus(dom.saveStatus, getErrorMessage(error), "error"); }
 }
 
 async function uploadMedia() {
@@ -237,7 +257,7 @@ async function uploadMedia() {
 
     dom.uploadForm.reset();
     dom.uploadedUrl.value = result.url;
-    maybeApplyUploadedMediaUrl(result.url);
+
     setStatus(dom.uploadStatus, `Uploaded: ${result.url}`, "ok");
   } catch (error) {
     setStatus(dom.uploadStatus, getErrorMessage(error), "error");
@@ -259,6 +279,9 @@ function maybeApplyUploadedMediaUrl(url) {
 }
 
 async function uploadFile(file) {
+  const pdf = file.type === 'application/pdf';
+  if (!['application/pdf', 'image/jpeg', 'image/png', 'image/webp'].includes(file.type)) throw new Error('Choose a JPG, PNG, WebP image or PDF.');
+  if (file.size > (pdf ? 20 : 5) * 1024 * 1024) throw new Error(pdf ? 'PDFs must be 20 MB or smaller.' : 'Images must be 5 MB or smaller.');
   const dataUrl = await readFileAsDataUrl(file);
 
   return requestJson("/api/creator/upload", {
@@ -279,52 +302,53 @@ function readFileAsDataUrl(file) {
   });
 }
 
-function addProject() {
+async function addProject() {
   const formData = new FormData(dom.projectForm);
-  const linkLabel = String(formData.get("linkLabel") || "View details").trim();
-  const linkUrl = String(formData.get("linkUrl") || "/contact").trim();
-  const project = {
-    title: String(formData.get("title") || "").trim(),
-    type: String(formData.get("type") || "Project").trim(),
-    summary: String(formData.get("summary") || "").trim(),
-    impact: String(formData.get("impact") || "Impact details coming soon.").trim(),
-    category: String(formData.get("category") || "Selected Work").trim(),
-    status: String(formData.get("status") || "Published").trim(),
-    stack: splitCsv(formData.get("stack")),
-    links: [{ label: linkLabel, url: linkUrl }],
-  };
-  const image = String(formData.get("image") || "").trim();
-
-  if (image) {
-    project.image = image;
+  const previous = structuredClone(state.content);
+  const existing = state.editingProject === null ? {} : state.content.projects[state.editingProject];
+  const project = { ...existing };
+  for (const name of ["title", "type", "summary", "impact", "category", "status", "image"]) project[name] = String(formData.get(name) || "").trim();
+  project.stack = splitCsv(formData.get("stack"));
+  project.links = [];
+  const customUrl = String(formData.get("linkUrl") || "").trim();
+  if (customUrl) project.links.push({ label: String(formData.get("linkLabel") || "View project"), url: customUrl });
+  for (const [field, label] of [["githubUrl", "GitHub"], ["demoUrl", "Live demo"]]) {
+    const url = String(formData.get(field) || "").trim(); if (url) project.links.push({ label, url });
   }
-
-  state.content.projects = [project, ...(state.content.projects || [])];
-  dom.projectForm.reset();
-  void saveContent("Project added.");
+  try {
+    const file = dom.projectForm.elements.thumbnailFile.files[0];
+    if (file) { setStatus(dom.saveStatus, "Uploading thumbnail…"); project.image = (await uploadFile(file)).url; }
+    state.content.projects ||= [];
+    if (state.editingProject === null) state.content.projects.unshift(project);
+    else state.content.projects[state.editingProject] = project;
+    if (await saveContent("Project saved.")) resetProjectForm();
+    else state.content = previous;
+  } catch (error) { state.content = previous; setStatus(dom.saveStatus, getErrorMessage(error), "error"); }
 }
 
-async function addPost() {
-  const formData = new FormData(dom.postForm);
+async function addPost(form = dom.postForm, writer = dom.postWriter, status = dom.postStatus) {
+  const formData = new FormData(form);
   const collection = String(formData.get("kind") || "techBlogs");
   const title = String(formData.get("title") || "").trim();
-  const body = splitLines(formData.get("body"));
-  const pdfFile = dom.postForm.elements.pdfFile?.files?.[0];
+  const pages = writer.getPages();
+  const body = splitLines(writer.plainText());
+  const pdfFile = form.elements.pdfFile?.files?.[0];
   const pdfUrl = String(formData.get("pdfUrl") || "").trim();
 
-  if (!body.length && !pdfFile && !pdfUrl) {
-    setStatus(dom.postStatus, "Add body text or attach a PDF.", "error");
+  if (writer.busy || (!writer.hasContent() && !pdfFile && !pdfUrl)) {
+    setStatus(status, "Add story content or a PDF, and wait for photo uploads to finish.", "error");
     return;
   }
 
   const post = {
     title,
-    slug: slugify(title),
+    slug: `${slugify(title) || "post"}-${crypto.randomUUID().slice(0,8)}`,
     date: String(formData.get("date") || new Date().toISOString().slice(0, 10)),
-    readTime: String(formData.get("readTime") || "4 min read").trim(),
+    readTime: String(formData.get("readTime") || `${Math.max(1, Math.ceil(writer.plainText().split(/\s+/).filter(Boolean).length / 200))} min read`).trim(),
     excerpt: String(formData.get("excerpt") || "").trim(),
     tags: splitCsv(formData.get("tags")),
     body,
+    pages: writer.hasContent() ? pages : [],
   };
   const image = String(formData.get("image") || "").trim();
 
@@ -338,23 +362,30 @@ async function addPost() {
 
   try {
     if (pdfFile) {
-      setStatus(dom.postStatus, "Uploading PDF...");
+      setStatus(status, "Uploading PDF...");
       const result = await uploadFile(pdfFile);
       post.pdfUrl = result.url;
     }
 
+    const previousContent = structuredClone(state.content);
     state.content[collection] = [post, ...(state.content[collection] || [])];
-    dom.postForm.reset();
 
     const saved = await saveContent(
       collection === "techBlogs" ? "Tech post added." : "Travel post added.",
     );
 
     if (saved) {
-      setStatus(dom.postStatus, post.pdfUrl ? "PDF post added." : "Post added.", "ok");
+      writer.clearDraft();
+      form.reset();
+      writer.load({}, form.id);
+      setStatus(status, "Post published.", "ok");
+    } else {
+      state.content = previousContent;
+      renderEditor();
+      setStatus(status, "Could not save. Your writing is still here; try again.", "error");
     }
   } catch (error) {
-    setStatus(dom.postStatus, getErrorMessage(error), "error");
+    setStatus(status, getErrorMessage(error), "error");
   }
 }
 
@@ -485,7 +516,7 @@ function beginEditPost(collection, index) {
   setFormValue(dom.postEditForm, "excerpt", post.excerpt);
   setFormValue(dom.postEditForm, "readTime", post.readTime);
   setFormValue(dom.postEditForm, "tags", Array.isArray(post.tags) ? post.tags.join(", ") : "");
-  setFormValue(dom.postEditForm, "body", Array.isArray(post.body) ? post.body.join("\n") : "");
+  dom.editWriter.load(post, `${collection}-${post.slug || index}`);
   setFormValue(dom.postEditForm, "pdfUrl", post.pdfUrl);
   setFormValue(dom.postEditForm, "image", post.image);
 
@@ -516,7 +547,9 @@ async function updatePost() {
   const formData = new FormData(dom.postEditForm);
   const nextCollection = String(formData.get("kind") || collection);
   const title = String(formData.get("title") || "").trim();
-  const body = splitLines(formData.get("body"));
+  const writer = dom.editWriter;
+  const pages = writer.getPages();
+  const body = splitLines(writer.plainText());
   const pdfFile = dom.postEditForm.elements.pdfFile?.files?.[0];
   const pdfUrl = String(formData.get("pdfUrl") || "").trim();
   const image = String(formData.get("image") || "").trim();
@@ -526,20 +559,21 @@ async function updatePost() {
     return;
   }
 
-  if (!body.length && !pdfFile && !pdfUrl) {
-    setStatus(dom.postEditStatus, "Keep body text or a PDF URL on the post.", "error");
+  if (writer.busy || (!writer.hasContent() && !pdfFile && !pdfUrl)) {
+    setStatus(dom.postEditStatus, "Keep story content or a PDF, and wait for photo uploads to finish.", "error");
     return;
   }
 
   const updatedPost = {
     ...existingPost,
     title,
-    slug: slugify(title),
+    slug: existingPost.slug || slugify(title),
     date: String(formData.get("date") || new Date().toISOString().slice(0, 10)),
-    readTime: String(formData.get("readTime") || "4 min read").trim(),
+    readTime: String(formData.get("readTime") || `${Math.max(1, Math.ceil(writer.plainText().split(/\s+/).filter(Boolean).length / 200))} min read`).trim(),
     excerpt: String(formData.get("excerpt") || "").trim(),
     tags: splitCsv(formData.get("tags")),
     body,
+    pages: writer.hasContent() ? pages : [],
   };
 
   if (image) {
@@ -561,6 +595,7 @@ async function updatePost() {
       updatedPost.pdfUrl = result.url;
     }
 
+    const previousContent = structuredClone(state.content);
     if (nextCollection === collection) {
       getPostCollection(collection)[index] = updatedPost;
     } else {
@@ -568,12 +603,16 @@ async function updatePost() {
       getPostCollection(nextCollection).unshift(updatedPost);
     }
 
-    state.editingPost = null;
     const saved = await saveContent("Post updated.");
 
     if (saved) {
+      writer.clearDraft();
       cancelPostEdit();
       setStatus(dom.postManagerStatus, "Post updated.", "ok");
+    } else {
+      state.content = previousContent;
+      renderEditor();
+      setStatus(dom.postEditStatus, "Could not save. Your writing is still here; try again.", "error");
     }
   } catch (error) {
     setStatus(dom.postEditStatus, getErrorMessage(error), "error");
@@ -660,7 +699,9 @@ async function saveContent(message) {
       method: "POST",
       body: JSON.stringify({ content: state.content }),
     });
-    renderEditor();
+    dom.jsonEditor.value = JSON.stringify(state.content, null, 2);
+    renderPostManager();
+    renderProjectManager();
     setStatus(dom.saveStatus, message, "ok");
     return true;
   } catch (error) {
@@ -716,4 +757,109 @@ function escapeHtml(value) {
 
 function escapeAttribute(value) {
   return escapeHtml(value);
+}
+
+
+function setupConsole() {
+  document.querySelectorAll('[data-compose-mode]').forEach(button => button.addEventListener('click', () => {
+    const form = button.closest('form');
+    form.querySelector('.writing-studio').hidden = button.dataset.composeMode === 'pdf';
+    form.querySelectorAll('[data-compose-mode]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+  }));
+  document.querySelectorAll('[data-console-tab]').forEach(button => {
+    button.addEventListener('click', () => switchPanel(button.dataset.consoleTab));
+    button.addEventListener('keydown', event => {
+      const buttons = [...document.querySelectorAll('[data-console-tab]')];
+      const direction = event.key === 'ArrowDown' ? 1 : event.key === 'ArrowUp' ? -1 : 0;
+      if (!direction && !['Home', 'End'].includes(event.key)) return;
+      event.preventDefault();
+      const next = event.key === 'Home' ? buttons[0] : event.key === 'End' ? buttons.at(-1) : buttons[(buttons.indexOf(button) + direction + buttons.length) % buttons.length];
+      switchPanel(next.dataset.consoleTab); next.focus();
+    });
+  });
+  switchPanel(location.hash.slice(1) || 'personal', false);
+  window.addEventListener('hashchange', () => switchPanel(location.hash.slice(1), false));
+  dom.travelForm.addEventListener('submit', event => { event.preventDefault(); void runSave(() => addPost(dom.travelForm, dom.travelWriter, dom.travelStatus)); });
+  document.querySelector('#project-cancel').addEventListener('click', resetProjectForm);
+  document.querySelector('#project-list').addEventListener('click', event => {
+    const button = event.target.closest('[data-edit-project]');
+    if (!button) return;
+    const index = Number(button.dataset.editProject);
+    const project = state.content.projects[index];
+    resetProjectForm(); state.editingProject = index;
+    for (const name of ['title', 'type', 'summary', 'impact', 'category', 'status', 'image']) setFormValue(dom.projectForm, name, project[name]);
+    setFormValue(dom.projectForm, 'stack', (project.stack || []).join(', '));
+    const links = project.links || [];
+    const github = links.find(link => /github\.com/i.test(link.url));
+    const demo = links.find(link => link.label === 'Live demo');
+    const other = links.find(link => link !== github && link !== demo);
+    setFormValue(dom.projectForm, 'githubUrl', github?.url);
+    setFormValue(dom.projectForm, 'demoUrl', demo?.url);
+    setFormValue(dom.projectForm, 'linkUrl', other?.url);
+    setFormValue(dom.projectForm, 'linkLabel', other?.label);
+    document.querySelector('#project-save').textContent = 'Save project changes';
+    document.querySelector('#project-cancel').hidden = false;
+    switchPanel('project');
+  });
+  document.querySelector('#add-skill-group').addEventListener('click', () => addSkillFields());
+  document.querySelector('#skills-form').addEventListener('submit', async event => {
+    event.preventDefault();
+    const previous = structuredClone(state.content);
+    const data = new FormData(event.target);
+    state.content.professionalFocus = { ...state.content.professionalFocus, intro: String(data.get('intro') || ''), coreStrengths: splitLines(data.get('coreStrengths')), roleFit: splitLines(data.get('roleFit')) };
+    state.content.skills = [...document.querySelectorAll('[data-skill-group]')].map(group => ({ group: group.querySelector('input').value.trim(), items: splitCsv(group.querySelector('textarea').value) })).filter(group => group.group && group.items.length);
+    if (!await saveContent('Skills and introduction saved.')) state.content = previous;
+  });
+}
+
+function switchPanel(name, updateHash = true) {
+  const panel = document.querySelector(`#panel-${CSS.escape(name)}`);
+  if (!panel) return;
+  state.activePanel = name;
+  document.querySelectorAll('.console-panel').forEach(item => item.hidden = item !== panel);
+  document.querySelectorAll('[data-console-tab]').forEach(button => {
+    const active = button.dataset.consoleTab === name;
+    button.setAttribute('aria-selected', String(active)); button.tabIndex = active ? 0 : -1;
+  });
+  if (updateHash) { history.replaceState(null, '', `#${name}`); window.scrollTo(0, 0); }
+}
+
+function resetProjectForm() {
+  state.editingProject = null;
+  dom.projectForm.reset();
+  document.querySelector('#project-save').textContent = 'Add project';
+  document.querySelector('#project-cancel').hidden = true;
+}
+
+function renderProjectManager() {
+  document.querySelector('#project-list').innerHTML = (state.content.projects || []).map((project, index) => `<article class="managed-post-card"><div><span class="eyebrow">${escapeHtml(project.category)}</span><h4>${escapeHtml(project.title)}</h4></div><button class="button button-ghost" type="button" data-edit-project="${index}">Edit project</button></article>`).join('') || '<p>No projects yet. Create your first project in New project.</p>';
+}
+
+function renderSkillFields() {
+  const form = document.querySelector('#skills-form');
+  const focus = state.content.professionalFocus || {};
+  setFormValue(form, 'intro', focus.intro);
+  setFormValue(form, 'coreStrengths', (focus.coreStrengths || []).join('\n'));
+  setFormValue(form, 'roleFit', (focus.roleFit || []).join('\n'));
+  document.querySelector('#skill-fields').replaceChildren();
+  (state.content.skills || []).forEach(addSkillFields);
+}
+
+function addSkillFields(group = {}) {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'skill-edit-group'; wrapper.dataset.skillGroup = '';
+  wrapper.innerHTML = '<label><span>Group name</span><input placeholder="e.g. Systems engineering" required></label><label><span>Skills (separated by commas)</span><textarea rows="3" placeholder="C++, Asio, TCP/IP"></textarea></label><button class="text-link" type="button">Remove group</button>';
+  wrapper.querySelector('input').value = group.group || '';
+  wrapper.querySelector('textarea').value = (group.items || []).join(', ');
+  wrapper.querySelector('button').addEventListener('click', () => wrapper.remove());
+  document.querySelector('#skill-fields').append(wrapper);
+}
+
+async function runSave(action) {
+  if (state.saving) return;
+  state.saving = true;
+  const buttons = [...document.querySelectorAll('#creator-dashboard button[type="submit"]')];
+  buttons.forEach(button => button.disabled = true);
+  try { await action(); }
+  finally { state.saving = false; buttons.forEach(button => button.disabled = false); }
 }

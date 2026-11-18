@@ -6,7 +6,7 @@
     <meta name="robots" content="noindex, nofollow" />
     <title>Owner Console | Portfolio</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="stylesheet" href="/styles.css?v=20260713-manager" />
+    <link rel="stylesheet" href="/styles.css?v=20261118-images" />
   </head>
   <body data-page="creator">
     <div class="ambient ambient-left"></div>
@@ -15,7 +15,7 @@
     <div class="site-shell creator-shell">
       <header class="topbar">
         <a class="brand" href="/" aria-label="Go to portfolio home">
-          <span class="brand-mark">PA</span>
+          <span class="brand-mark">AP</span>
           <span class="brand-copy">
             <strong>Owner Console</strong>
             <small>Private content studio</small>
@@ -50,31 +50,13 @@
           <p class="form-status" id="login-status" role="status" aria-live="polite"></p>
         </section>
 
-        <section class="section creator-dashboard" id="creator-dashboard" hidden>
-          <div class="section-framed">
-            <div class="page-banner">
-              <div class="section-head compact">
-                <span class="section-kicker">Content studio</span>
-                <h1>Edit data, publish posts, and manage images.</h1>
-                <p>
-                  Professionals usually keep portfolio content in a protected CMS.
-                  This is a lightweight local version built around your JSON data.
-                </p>
-              </div>
-              <div class="page-banner-card">
-                <span class="subsection-kicker">Hidden route</span>
-                <h3>/owner-console</h3>
-                <p>Share this route with nobody. The key is the real protection.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="section split-layout">
-            <form class="panel creator-card" id="profile-form">
+<section id="creator-dashboard" class="console-layout" hidden>
+<aside class="console-sidebar"><div class="console-sidebar-head"><span class="eyebrow">Content studio</span><h2>Make it yours.</h2></div><nav role="tablist" aria-label="Console sections" aria-orientation="vertical"><button type="button" role="tab" id="tab-personal" aria-controls="panel-personal" aria-selected="true" tabindex="0" data-console-tab="personal"><span class="console-nav-number">01</span><span><strong>Personal info</strong><small>Identity, portrait & links</small></span></button><button type="button" role="tab" id="tab-blog" aria-controls="panel-blog" aria-selected="false" tabindex="-1" data-console-tab="blog"><span class="console-nav-number">02</span><span><strong>New blog</strong><small>Travel, stories & reflections</small></span></button><button type="button" role="tab" id="tab-tech" aria-controls="panel-tech" aria-selected="false" tabindex="-1" data-console-tab="tech"><span class="console-nav-number">03</span><span><strong>New tech blog</strong><small>Ideas, engineering & tutorials</small></span></button><button type="button" role="tab" id="tab-project" aria-controls="panel-project" aria-selected="false" tabindex="-1" data-console-tab="project"><span class="console-nav-number">04</span><span><strong>New project</strong><small>Work, code & demos</small></span></button><button type="button" role="tab" id="tab-manage" aria-controls="panel-manage" aria-selected="false" tabindex="-1" data-console-tab="manage"><span class="console-nav-number">05</span><span><strong>Manage content</strong><small>Edit published posts & projects</small></span></button><button type="button" role="tab" id="tab-skills" aria-controls="panel-skills" aria-selected="false" tabindex="-1" data-console-tab="skills"><span class="console-nav-number">06</span><span><strong>Skills & about</strong><small>Capabilities & introduction</small></span></button><button type="button" role="tab" id="tab-media" aria-controls="panel-media" aria-selected="false" tabindex="-1" data-console-tab="media"><span class="console-nav-number">07</span><span><strong>Media library</strong><small>Upload images & PDFs</small></span></button><button type="button" role="tab" id="tab-advanced" aria-controls="panel-advanced" aria-selected="false" tabindex="-1" data-console-tab="advanced"><span class="console-nav-number">08</span><span><strong>Advanced</strong><small>Raw content & backups</small></span></button></nav><p class="console-help">Your writing stays here when you switch sections. Save to update your portfolio.</p></aside>
+<div class="console-workspace"><p class="console-save-status" id="save-status" role="status" aria-live="polite"></p><section id="panel-personal" class="console-panel" role="tabpanel" aria-labelledby="tab-personal" ><div class="console-page-head"><span class="eyebrow">Your workspace / Personal info</span><h1>Personal info</h1><p>Identity, portrait & links.</p></div><form class="panel creator-card" id="profile-form">
               <div class="subsection-head compact">
                 <div>
                   <span class="subsection-kicker">Profile</span>
-                  <h3>Quick edit basics</h3>
+                  <h3>Personal information</h3>
                 </div>
               </div>
               <div class="form-grid">
@@ -95,11 +77,11 @@
                   <input name="phone" />
                 </label>
                 <label class="full-span">
-                  <span>Headline</span>
+                  <span>Homepage headline</span>
                   <input name="headline" />
                 </label>
                 <label class="full-span">
-                  <span>Subheadline</span>
+                  <span>Short bio / description</span>
                   <textarea name="subheadline" rows="3"></textarea>
                 </label>
                 <label class="full-span">
@@ -107,35 +89,117 @@
                   <input name="resumeUrl" placeholder="/uploads/resume.pdf or external link" />
                 </label>
               </div>
-              <button class="button" type="submit">Save profile</button>
-            </form>
-
-            <form class="panel creator-card" id="upload-form">
+              <div class="form-grid">
+<label><span>Profile image URL</span><input name="photoUrl" placeholder="/assets/portrait.jpg or https://…" /></label>
+<label><span>Upload a profile photo</span><input name="photoFile" type="file" accept="image/jpeg,image/png,image/webp" /></label>
+<label><span>Availability</span><input name="availability" /></label>
+<label><span>GitHub profile</span><input name="githubUrl" type="url" placeholder="https://github.com/…" /></label>
+<label><span>LinkedIn profile</span><input name="linkedinUrl" type="url" placeholder="https://linkedin.com/in/…" /></label>
+<label><span>Upload resume PDF</span><input name="resumeFile" type="file" accept="application/pdf" /></label>
+</div><button class="button" type="submit">Save personal info</button>
+            </form></section><section id="panel-blog" class="console-panel" role="tabpanel" aria-labelledby="tab-blog" hidden><div class="console-page-head"><span class="eyebrow">Your workspace / New blog</span><h1>New blog</h1><p>Travel, stories & reflections.</p></div><form class="panel creator-card" id="travel-post-form">
               <div class="subsection-head compact">
                 <div>
-                  <span class="subsection-kicker">Media</span>
-                  <h3>Upload a JPG, PNG, WebP, or PDF</h3>
+                  <span class="subsection-kicker">Writing</span>
+                  <h3>New blog</h3>
                 </div>
               </div>
-              <label>
-                <span>Media file</span>
-                <input type="file" name="image" accept="image/png,image/jpeg,image/webp,application/pdf,.pdf" required />
-              </label>
-              <button class="button" type="submit">Upload file</button>
-              <p class="form-status" id="upload-status" role="status" aria-live="polite"></p>
-              <label>
-                <span>Uploaded media URL</span>
-                <input id="uploaded-url" readonly placeholder="Upload a file to get a URL" />
-              </label>
-            </form>
-          </div>
-
-          <div class="section split-layout">
-            <form class="panel creator-card" id="project-form">
+              <div class="form-grid">
+                <input type="hidden" name="kind" value="travelBlogs" />
+                <label>
+                  <span>Date</span>
+                  <input name="date" type="date" />
+                </label>
+                <label class="full-span">
+                  <span>Title</span>
+                  <input name="title" required />
+                </label>
+                <label class="full-span">
+                  <span>Excerpt</span>
+                  <textarea name="excerpt" rows="3" required></textarea>
+                </label>
+                <label>
+                  <span>Read time</span>
+                  <input name="readTime" placeholder="Auto calculated" />
+                </label>
+                <label>
+                  <span>Tags</span>
+                  <input name="tags" placeholder="Systems, Travel, Notes" />
+                </label>
+                <div class="full-span compose-choice" role="group" aria-label="Post format"><button type="button" data-compose-mode="write" aria-pressed="true">Write an article</button><button type="button" data-compose-mode="pdf" aria-pressed="false">Upload a PDF</button><span>Write, attach a PDF, or combine both. Your text is kept when you switch.</span></div>
+                <label class="full-span">
+                  <span>Your story</span>
+                  <textarea name="body" rows="7" placeholder="Write each paragraph on a new line, or attach a PDF below."></textarea>
+                </label>
+                <label class="full-span">
+                  <span>Attach a PDF directly (optional)</span>
+                  <input type="file" name="pdfFile" accept="application/pdf,.pdf" />
+                </label>
+                <label class="full-span">
+                  <span>PDF URL</span>
+                  <input name="pdfUrl" placeholder="/uploads/your-post.pdf" />
+                </label>
+                <label class="full-span">
+                  <span>Cover image URL</span>
+                  <input name="image" placeholder="/uploads/your-image.webp" />
+                </label>
+              </div>
+              <button class="button" type="submit">Publish blog</button>
+              <p class="form-status" id="travel-post-status" role="status" aria-live="polite"></p>
+            </form></section><section id="panel-tech" class="console-panel" role="tabpanel" aria-labelledby="tab-tech" hidden><div class="console-page-head"><span class="eyebrow">Your workspace / New tech blog</span><h1>New tech blog</h1><p>Ideas, engineering & tutorials.</p></div><form class="panel creator-card" id="post-form">
+              <div class="subsection-head compact">
+                <div>
+                  <span class="subsection-kicker">Writing</span>
+                  <h3>New tech blog</h3>
+                </div>
+              </div>
+              <div class="form-grid">
+                <input type="hidden" name="kind" value="techBlogs" />
+                <label>
+                  <span>Date</span>
+                  <input name="date" type="date" />
+                </label>
+                <label class="full-span">
+                  <span>Title</span>
+                  <input name="title" required />
+                </label>
+                <label class="full-span">
+                  <span>Excerpt</span>
+                  <textarea name="excerpt" rows="3" required></textarea>
+                </label>
+                <label>
+                  <span>Read time</span>
+                  <input name="readTime" placeholder="Auto calculated" />
+                </label>
+                <label>
+                  <span>Tags</span>
+                  <input name="tags" placeholder="Systems, Travel, Notes" />
+                </label>
+                <div class="full-span compose-choice" role="group" aria-label="Post format"><button type="button" data-compose-mode="write" aria-pressed="true">Write an article</button><button type="button" data-compose-mode="pdf" aria-pressed="false">Upload a PDF</button><span>Write, attach a PDF, or combine both. Your text is kept when you switch.</span></div>
+                <label class="full-span">
+                  <span>Your story</span>
+                  <textarea name="body" rows="7" placeholder="Write each paragraph on a new line, or attach a PDF below."></textarea>
+                </label>
+                <label class="full-span">
+                  <span>Attach a PDF directly (optional)</span>
+                  <input type="file" name="pdfFile" accept="application/pdf,.pdf" />
+                </label>
+                <label class="full-span">
+                  <span>PDF URL</span>
+                  <input name="pdfUrl" placeholder="/uploads/your-post.pdf" />
+                </label>
+                <label class="full-span">
+                  <span>Cover image URL</span>
+                  <input name="image" placeholder="/uploads/your-image.webp" />
+                </label>
+              </div>
+              <button class="button" type="submit">Publish tech blog</button>
+              <p class="form-status" id="post-status" role="status" aria-live="polite"></p>
+            </form></section><section id="panel-project" class="console-panel" role="tabpanel" aria-labelledby="tab-project" hidden><div class="console-page-head"><span class="eyebrow">Your workspace / New project</span><h1>New project</h1><p>Work, code & demos.</p></div><form class="panel creator-card" id="project-form">
               <div class="subsection-head compact">
                 <div>
                   <span class="subsection-kicker">Projects</span>
-                  <h3>Add a project card</h3>
+                  <h3>New project</h3>
                 </div>
               </div>
               <div class="form-grid">
@@ -145,7 +209,7 @@
                 </label>
                 <label>
                   <span>Category</span>
-                  <input name="category" placeholder="Frontend Experience" required />
+                  <input name="category" placeholder="C++ / Systems / Web" required />
                 </label>
                 <label>
                   <span>Type</span>
@@ -165,82 +229,27 @@
                 </label>
                 <label class="full-span">
                   <span>Stack or tags</span>
-                  <input name="stack" placeholder="React, Node.js, Analytics" />
+                  <input name="stack" placeholder="C++20, CUDA, CMake" />
                 </label>
                 <label>
-                  <span>Link label</span>
+                  <span>Other link label (optional)</span>
                   <input name="linkLabel" placeholder="View project" />
                 </label>
                 <label>
-                  <span>Link URL</span>
+                  <span>Other link URL (optional)</span>
                   <input name="linkUrl" placeholder="/contact or https://..." />
                 </label>
                 <label class="full-span">
-                  <span>Image URL</span>
+                  <span>Thumbnail URL</span>
                   <input name="image" placeholder="/uploads/your-image.webp" />
                 </label>
-              </div>
-              <button class="button" type="submit">Add project</button>
-            </form>
-
-            <form class="panel creator-card" id="post-form">
-              <div class="subsection-head compact">
-                <div>
-                  <span class="subsection-kicker">Writing</span>
-                  <h3>Add a tech or travel post</h3>
-                </div>
               </div>
               <div class="form-grid">
-                <label>
-                  <span>Stream</span>
-                  <select name="kind">
-                    <option value="techBlogs">Tech blog</option>
-                    <option value="travelBlogs">Travel/adventure blog</option>
-                  </select>
-                </label>
-                <label>
-                  <span>Date</span>
-                  <input name="date" type="date" />
-                </label>
-                <label class="full-span">
-                  <span>Title</span>
-                  <input name="title" required />
-                </label>
-                <label class="full-span">
-                  <span>Excerpt</span>
-                  <textarea name="excerpt" rows="3" required></textarea>
-                </label>
-                <label>
-                  <span>Read time</span>
-                  <input name="readTime" placeholder="4 min read" />
-                </label>
-                <label>
-                  <span>Tags</span>
-                  <input name="tags" placeholder="Systems, Travel, Notes" />
-                </label>
-                <label class="full-span">
-                  <span>Body paragraphs</span>
-                  <textarea name="body" rows="7" placeholder="Write each paragraph on a new line, or attach a PDF below."></textarea>
-                </label>
-                <label class="full-span">
-                  <span>PDF file</span>
-                  <input type="file" name="pdfFile" accept="application/pdf,.pdf" />
-                </label>
-                <label class="full-span">
-                  <span>PDF URL</span>
-                  <input name="pdfUrl" placeholder="/uploads/your-post.pdf" />
-                </label>
-                <label class="full-span">
-                  <span>Image URL</span>
-                  <input name="image" placeholder="/uploads/your-image.webp" />
-                </label>
-              </div>
-              <button class="button" type="submit">Add post</button>
-              <p class="form-status" id="post-status" role="status" aria-live="polite"></p>
-            </form>
-          </div>
-
-          <section class="section section-framed creator-card">
+<label><span>GitHub repository</span><input name="githubUrl" type="url" placeholder="https://github.com/…" /></label>
+<label><span>Live demo</span><input name="demoUrl" type="url" placeholder="https://…" /></label>
+<label class="full-span"><span>Upload thumbnail</span><input name="thumbnailFile" type="file" accept="image/jpeg,image/png,image/webp" /></label>
+</div><div class="form-actions"><button class="button" type="submit" id="project-save">Add project</button><button class="button button-ghost" type="button" id="project-cancel" hidden>Cancel edit</button></div>
+            </form></section><section id="panel-manage" class="console-panel" role="tabpanel" aria-labelledby="tab-manage" hidden><div class="console-page-head"><span class="eyebrow">Your workspace / Manage content</span><h1>Manage content</h1><p>Edit published posts & projects.</p></div><section class="creator-card" id="blog-manager">
             <div class="subsection-head">
               <div>
                 <span class="subsection-kicker">Blog manager</span>
@@ -298,7 +307,7 @@
                     <input name="tags" placeholder="Systems, Travel, Notes" />
                   </label>
                   <label class="full-span">
-                    <span>Body paragraphs</span>
+                    <span>Your story</span>
                     <textarea name="body" rows="7" placeholder="Write each paragraph on a new line, or use a PDF URL."></textarea>
                   </label>
                   <label class="full-span">
@@ -321,31 +330,35 @@
                 </div>
               </form>
             </div>
-          </section>
-
-          <section class="section section-framed creator-card">
-            <div class="subsection-head">
-              <div>
-                <span class="subsection-kicker">Advanced</span>
-                <h3>Raw JSON editor</h3>
+          </section><div class="panel"><h3>Projects</h3><p class="quiet-copy">Select a project to edit its details.</p><div id="project-list" class="post-list"></div></div></section><section id="panel-skills" class="console-panel" role="tabpanel" aria-labelledby="tab-skills" hidden><div class="console-page-head"><span class="eyebrow">Your workspace / Skills & about</span><h1>Skills & about</h1><p>Capabilities & introduction.</p></div><form class="panel creator-card" id="skills-form"><h3>Skills & about</h3><p class="quiet-copy">Keep your profile specific. Add only skills and experience you can talk about confidently.</p>
+<label><span>About you</span><textarea name="intro" rows="4"></textarea></label>
+<label><span>Core strengths (one per line)</span><textarea name="coreStrengths" rows="4"></textarea></label>
+<label><span>Roles you are interested in (one per line)</span><textarea name="roleFit" rows="3"></textarea></label>
+<div id="skill-fields" class="form-grid"></div><button type="button" class="button button-ghost" id="add-skill-group">Add skill group</button>
+<button class="button" type="submit">Save skills & about</button></form></section><section id="panel-media" class="console-panel" role="tabpanel" aria-labelledby="tab-media" hidden><div class="console-page-head"><span class="eyebrow">Your workspace / Media library</span><h1>Media library</h1><p>Upload images & PDFs.</p></div><form class="panel creator-card" id="upload-form">
+              <div class="subsection-head compact">
+                <div>
+                  <span class="subsection-kicker">Media</span>
+                  <h3>Upload a JPG, PNG, WebP, or PDF</h3>
+                </div>
               </div>
-              <button class="button button-ghost" type="button" id="reload-content">Reload content</button>
-            </div>
-            <form id="json-form">
+              <label>
+                <span>Media file</span>
+                <input type="file" name="image" accept="image/png,image/jpeg,image/webp,application/pdf,.pdf" required />
+              </label>
+              <button class="button" type="submit">Upload file</button>
+              <p class="form-status" id="upload-status" role="status" aria-live="polite"></p>
+              <label>
+                <span>Uploaded media URL</span>
+                <input id="uploaded-url" readonly placeholder="Upload a file to get a URL" />
+              </label>
+            </form></section><section id="panel-advanced" class="console-panel" role="tabpanel" aria-labelledby="tab-advanced" hidden><div class="console-page-head"><span class="eyebrow">Your workspace / Advanced</span><h1>Advanced</h1><p>Raw content & backups.</p></div><div class="panel creator-card"><h3>Advanced content editor</h3><p class="quiet-copy">This edits the entire portfolio data. For everyday changes, use the sections in the sidebar.</p><button type="button" class="button button-ghost" id="reload-content">Reload saved content</button><form id="json-form">
               <label>
                 <span>data/site-content.json</span>
                 <textarea class="json-editor" id="json-editor" rows="22" spellcheck="false"></textarea>
               </label>
               <div class="form-actions">
                 <button class="button" type="submit">Save JSON</button>
-                <p class="form-status" id="save-status" role="status" aria-live="polite"></p>
-              </div>
-            </form>
-          </section>
-        </section>
-      </main>
-    </div>
 
-    <script type="module" src="/creator.js?v=20260713-manager"></script>
-  </body>
-</html>
+              </div>
+            </form></div></section></div></section></main></div><script type="module" src="/creator.js?v=20261118-images"></script></body></html>

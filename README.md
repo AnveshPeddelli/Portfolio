@@ -190,3 +190,53 @@ Then rebuild:
 - The `public/uploads/` folder is the right place for PDFs/images uploaded through the local owner console and intended for GitHub Pages.
 - Online uploads should use persistent storage. Otherwise, files can disappear when the host redeploys or restarts the app.
 - If you want a custom domain later, add a `CNAME` file inside `docs/`.
+
+## Document writing studio
+
+New and existing posts have a visual editor: headings, bold/italic/underline, lists,
+quotes, code, alignment, links, tables, dividers, and undo/redo. Use **Photos** to
+upload multiple JPG/PNG/WebP files (up to 5 MB each), or paste/drop photos into
+the document. Edit captions directly beneath each photo.
+
+Use **+ Page** to create chapters and the page controls to reorder or remove them.
+**Preview** shows the full story. Pages are explicit sections, not automatic paper
+pagination. Photos and formatting appear in the public blog reader and static build.
+Existing plain-text and PDF posts remain supported; PDFs can accompany a document.
+
+Drafts are saved locally in the same browser. After reopening a post, use
+**Restore draft** to recover writing. Browser drafts are not published or synced
+between devices. **Add post** or **Save changes** saves to the portfolio server;
+the GitHub Pages build/commit/push workflow above still applies.
+
+## Organized owner workspace
+
+The owner console shows one section at a time. Use the sidebar (or the compact
+section buttons on mobile) to switch between Personal info, New blog, New tech
+blog, New project, Manage content, Skills & about, Media library, and Advanced.
+Switching sections keeps unsaved form fields and writing in place.
+
+- **Personal info:** name, headline, short bio, contact details, availability,
+  social profiles, profile image and resume. Upload an image or PDF directly.
+- **New blog / New tech blog:** independent writing editors and browser drafts.
+  Choose **Write an article** or **Upload a PDF**; PDFs can also accompany text.
+- **New project:** summary, impact, stack, repository, demo, other links and an
+  uploaded thumbnail. Open an existing project from **Manage content** to edit it.
+- **Skills & about:** introduction, strengths, target roles and editable skill groups.
+- **Media library:** upload a file and copy its URL for use in another section.
+
+The public site uses a responsive editorial layout, with light and dark themes,
+project-led content and skills drawn from the documented work in this repository.
+
+### Editing photos in a document
+
+Click a photo to select it. Drag the corner handle, use the width slider (10–100%),
+or choose a size preset. The image keeps its original proportions and stays within
+the document width. The photo toolbar also provides alignment, an accessible image
+description, and removal. Type captions directly below photos; captions follow the
+photo width and alignment. Image changes support Undo/Redo, including Ctrl+Z and
+Ctrl+Shift+Z. Width and alignment are retained in drafts, saved posts and previews.
+
+The browser regression fixture is in `tests/editor-fixture.html`. With the local
+server running, temporarily copy it to `public/.editor-qa.html` and open that URL.
+It uses a mock uploader and does not write portfolio content. Remove the temporary
+public copy before building the site.

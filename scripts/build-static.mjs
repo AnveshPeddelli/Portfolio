@@ -16,6 +16,7 @@ const DOCS_CONTENT_FILE = path.join(DOCS_CONTENT_DIR, "site-content.json");
 const PUBLIC_FILES_TO_SKIP = new Set([
   "creator.html",
   "creator.js",
+  "writing-editor.js",
   "insights.html",
   "insights.js",
 ]);

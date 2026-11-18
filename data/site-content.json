@@ -1,9 +1,9 @@
 {
   "profile": {
     "name": "Anvesh Peddelli",
-    "headline": "Code. Strategy. Exploration -- Writing My Own Grand Line",
-    "subheadline": "Software Developer evolving into a management professional, bridging technology, business, and real-world experiences",
-    "availability": "Open to software engineering and product-focused roles.",
+    "headline": "Software built with purpose.",
+    "subheadline": "I’m Anvesh, a software developer building C++ applications, exploring GPU computing, and connecting engineering decisions with real-world impact.",
+    "availability": "Open to software engineering opportunities.",
     "location": "Bangalore, India / Remote",
     "email": "anvesh.peddelli@gmail.com",
     "phone": "+91 9490290297",
@@ -12,54 +12,46 @@
     "photoUrl": "/assets/anvesh-portfolio-pic.jpg",
     "heroMetrics": [
       {
-        "value": "12+",
-        "label": "Products and systems shipped"
+        "value": "82.09%",
+        "label": "Fewer points in a CloudForge frame"
       },
       {
-        "value": "8",
-        "label": "Essays and notes published"
+        "value": "4.43×",
+        "label": "Lower median latency with CUDA"
       },
       {
-        "value": "15k+",
-        "label": "Refactored with measurable impact"
-      },
-      {
-        "value": "4",
-        "label": "Travel stories in the journal"
+        "value": "900",
+        "label": "Paired output checks passed"
       }
     ],
     "highlights": [
-      "Turning ambiguity into scoped, durable product decisions",
-      "Building lightweight tools that teams actually adopt",
-      "Communicating technical work with clarity and restraint"
+      "C++ & systems programming",
+      "GPU computing & visualization",
+      "Product-minded problem solving"
     ],
     "socialLinks": [
       {
         "label": "GitHub",
-        "url": "https://github.com/your-username"
-      },
-      {
-        "label": "LinkedIn",
-        "url": "https://www.linkedin.com/in/your-handle"
+        "url": "https://github.com/AnveshPeddelli"
       },
       {
         "label": "Email",
-        "url": "mailto:peddelli.anvesh@gmail.com"
+        "url": "mailto:anvesh.peddelli@gmail.com"
       }
     ]
   },
   "professionalFocus": {
-    "intro": "I focus on reliable execution, simple systems, and communication that keeps teams moving.",
+    "intro": "I enjoy turning complex technical problems into practical software. My projects span point-cloud processing, GPU benchmarking, desktop visualization, and encrypted network communication. Alongside engineering, I’m interested in the product and management decisions that make software useful.",
     "coreStrengths": [
-      "Turning rough ideas into scoped product roadmaps",
-      "Building lightweight full-stack experiences with a focus on performance",
-      "Creating internal tools, dashboards, and automations that remove repetitive work",
-      "Balancing architecture decisions with practical shipping pressure"
+      "Building C++ desktop applications with clear, modular architecture",
+      "Measuring performance and validating results across CPU and GPU implementations",
+      "Working with asynchronous networking and encrypted communication",
+      "Explaining technical decisions through readable documentation and demos"
     ],
     "roleFit": [
-      "Product engineering roles with real ownership",
-      "Platform or internal-tool work that improves team leverage",
-      "Teams that value calm execution over noise"
+      "C++ / software engineering",
+      "Systems & desktop applications",
+      "GPU computing & performance"
     ],
     "operatingPrinciples": [
       {
@@ -87,23 +79,19 @@
     ]
   },
   "workOverview": {
-    "intro": "I like work where product context, usability, and systems thinking all matter together.",
+    "intro": "A closer look at what I build: the problem, the implementation, and the results.",
     "metrics": [
       {
-        "value": "70%",
-        "label": "Reporting time reduced in one analytics workflow"
+        "value": "82.09%",
+        "label": "Fewer points in a CloudForge frame"
       },
       {
-        "value": "4",
-        "label": "Project categories represented across the portfolio"
+        "value": "4.43×",
+        "label": "Lower median latency with CUDA"
       },
       {
-        "value": "3",
-        "label": "Disciplines combined regularly: engineering, product, communication"
-      },
-      {
-        "value": "1",
-        "label": "Preferred direction: clear, lightweight systems over unnecessary complexity"
+        "value": "900",
+        "label": "Paired output checks passed"
       }
     ],
     "caseStudyLens": [
@@ -196,76 +184,65 @@
   ],
   "skills": [
     {
-      "group": "Core Engineering",
+      "group": "Systems & networking",
       "items": [
-        "JavaScript / TypeScript",
+        "C++17 / C++20",
+        "Asio",
+        "TCP/IP",
+        "Asynchronous I/O",
+        "AES-256-GCM",
+        "Windows CNG"
+      ]
+    },
+    {
+      "group": "GPU & visualization",
+      "items": [
+        "CUDA",
+        "CUB",
+        "OpenGL",
+        "GLFW",
+        "Point-cloud processing",
+        "CPU / GPU benchmarking"
+      ]
+    },
+    {
+      "group": "Tools & validation",
+      "items": [
+        "CMake",
+        "vcpkg",
+        "GoogleTest",
+        "Git / GitHub",
+        "WSL2",
+        "Performance measurement"
+      ]
+    },
+    {
+      "group": "Web & communication",
+      "items": [
+        "JavaScript",
         "Node.js",
-        "REST APIs",
-        "Async workflows",
-        "Lightweight architecture"
-      ]
-    },
-    {
-      "group": "Frontend Craft",
-      "items": [
-        "Responsive UI systems",
-        "Interaction design",
-        "Content-driven rendering",
-        "Accessibility-aware layouts",
-        "Performance-focused styling"
-      ]
-    },
-    {
-      "group": "Delivery and Product",
-      "items": [
-        "Roadmapping",
-        "Feature scoping",
-        "Stakeholder communication",
-        "Requirement synthesis",
-        "Outcome tracking"
-      ]
-    },
-    {
-      "group": "Automation and Data",
-      "items": [
-        "Event instrumentation",
-        "Operational dashboards",
-        "Simple data pipelines",
-        "File-based persistence",
-        "Workflow simplification"
-      ]
-    },
-    {
-      "group": "Storytelling",
-      "items": [
-        "Technical writing",
-        "Case study framing",
-        "Travel journaling",
-        "Personal branding",
-        "Narrative-driven communication"
+        "HTML / CSS",
+        "Responsive interfaces",
+        "Technical documentation",
+        "Project storytelling"
       ]
     }
   ],
   "achievements": [
     {
-      "title": "Built systems that teams kept after the prototype phase",
-      "meta": "Engineering impact",
-      "description": "Focused on solutions that hold up in real usage, not just demo moments."
+      "meta": "CloudForge",
+      "title": "82.09% fewer points in one real frame",
+      "description": "Voxel-grid centroid downsampling reduced 55,518 points to 9,943 while supporting before/after inspection."
     },
     {
-      "title": "Created a portfolio narrative that separates signal from noise",
-      "meta": "Brand building",
-      "description": "Combined professional work, personal writing, and travel perspective without making the site feel crowded."
+      "meta": "Performance validation",
+      "title": "4.43× lower median processing latency",
+      "description": "Measured against the single-threaded CPU reference across a 30-frame benchmark, with all 900 paired output checks passing."
     },
     {
-      "title": "Documented projects in a way that hiring teams can skim quickly",
-      "meta": "Communication",
-      "description": "Wrote concise, metric-led summaries so achievements land fast."
-    },
-    {
-      "title": "Kept the stack intentionally light",
-      "meta": "Technical choice",
-      "description": "No heavy framework overhead, but still dynamic, interactive, and ready to deploy."
+      "meta": "O-Chat",
+      "title": "Encrypted, multi-client LAN communication",
+      "description": "Asynchronous TCP networking, queued message delivery, and AES-256-GCM encryption in a modular C++17 application."
     }
   ],
   "timeline": [
@@ -303,7 +280,7 @@
   "techBlogs": [],
   "travelBlogs": [],
   "journeyFocus": {
-    "intro": "This side stays curated on purpose. It adds perspective without taking focus away from the work.",
+    "intro": "Engineering notes, lessons from building, and stories collected along the way. A space for the technical and the personal.",
     "themes": [
       {
         "title": "Writing sharpens thought",

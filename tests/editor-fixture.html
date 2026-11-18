@@ -1,0 +1,20 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Document editor regression checks</title><link rel="stylesheet" href="/styles.css"><body style="max-width:1100px;margin:auto;padding:24px"><h1>Editor regression checks</h1><button id="load">Load image fixture</button><button id="roundtrip">Reload saved pages</button><button id="upload">Mock photo upload</button><button id="checks">Run sanitizer checks</button><output id="result"></output><form id="qa-form"><label>Body<textarea name="body"></textarea></label></form><script type="module">
+import { WritingEditor } from '/writing-editor.js';
+import { cleanDocument, renderDocument } from '/document.js';
+const writer = new WritingEditor(document.querySelector('textarea'), async () => '/assets/anvesh-portfolio-pic.jpg');
+const fixture = { pages: [{ html: '<p>Before the photo.</p><figure><img src="/assets/anvesh-portfolio-pic.jpg" alt="Journey photo" style="width:100%" data-image-align="center"><figcaption>A journey caption.</figcaption></figure><p>After the photo.</p>' }] };
+document.querySelector('#load').onclick = () => writer.load(fixture);
+document.querySelector('#roundtrip').onclick = () => { const pages = JSON.parse(JSON.stringify(writer.getPages())); writer.load({pages}); document.querySelector('#result').textContent = 'Saved pages reloaded.'; };
+document.querySelector('#upload').onclick = () => writer.insertPhotos([new File(['fixture'], 'travel.jpg', {type:'image/jpeg'})]);
+document.querySelector('#checks').onclick = () => {
+ const cases = [
+  ['Width and alignment survive', () => { const html=cleanDocument('<img src="/photo.jpg" style="width:50%;position:fixed" data-image-align="right" onerror="alert(1)" data-editor-selected="true">'); return html.includes('width: 50%') && html.includes('data-image-align="right"') && !/position|onerror|data-editor-selected/.test(html); }],
+  ['Unsafe content stripped', () => !/javascript:|<script|onload|<svg/.test(cleanDocument('<script>alert(1)<\/script><img src="javascript:alert(1)" onload="alert(1)"><svg onload="alert(1)"></svg>'))],
+  ['Invalid dimensions rejected', () => !cleanDocument('<img src="/photo.jpg" style="width:999%;height:1px" data-image-align="bad">').includes('style=')],
+  ['Legacy dimensions supported', () => cleanDocument('<img src="/photo.jpg" width="320">').includes('width="320"')],
+  ['Public rendering preserves width', () => renderDocument([{html:'<img src="/photo.jpg" style="width:25%" data-image-align="left">'}], value=>'.'+value).includes('width: 25%')],
+ ];
+ const results=cases.map(([name,test])=>`${test()?'PASS':'FAIL'}: ${name}`); document.querySelector('#result').textContent=results.join('\n');
+};
+writer.load(fixture);
+</script></body></html>
